@@ -1,36 +1,186 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ResumeGen - Professional Resume Builder
 
-## Getting Started
+A full-stack Next.js application for creating, managing, and sharing multiple versions of professional resumes with PDF export and cloud storage integration.
 
-First, run the development server:
+## 🚀 Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Google OAuth Authentication** - Secure sign-in with NextAuth.js
+- **Multiple Resume Versions** - Create tailored resumes for different job roles
+- **Rich Resume Editor** - Comprehensive form for all resume sections
+- **PDF Export** - Generate professional PDFs with clean formatting
+- **Cloud Storage** - Upload and share resumes via Google Cloud Storage
+- **Responsive Design** - Beautiful UI built with Tailwind CSS and shadcn/ui
+- **PostgreSQL Database** - Store resume data with Prisma ORM
+- **Auto-save** - Never lose your work
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Next.js 15 (App Router), React 19, Tailwind CSS
+- **UI Components**: shadcn/ui, Radix UI, Lucide Icons
+- **Authentication**: NextAuth.js with Google OAuth
+- **Database**: PostgreSQL with Prisma ORM
+- **Storage**: Google Cloud Storage
+- **PDF Generation**: jsPDF + html2canvas
+- **Form Management**: React Hook Form + Zod validation
+
+## 📋 Prerequisites
+
+- Node.js 18+ and pnpm/npm/yarn
+- PostgreSQL database
+- Google OAuth credentials
+- Google Cloud Storage bucket (optional, for cloud sharing)
+
+## 🔧 Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd resume-generator
+   ```
+
+2. **Install dependencies**
+   ```bash
+   pnpm install
+   ```
+
+3. **Set up environment variables**
+   ```bash
+   cp .env.example .env
+   ```
+
+   Fill in the following variables in `.env`:
+   ```env
+   DATABASE_URL="postgresql://user:password@localhost:5432/resume_generator"
+   NEXTAUTH_SECRET="generate-with-openssl-rand-base64-32"
+   NEXTAUTH_URL="http://localhost:3000"
+   GOOGLE_CLIENT_ID="your-google-client-id"
+   GOOGLE_CLIENT_SECRET="your-google-client-secret"
+   GCP_PROJECT_ID="your-gcp-project-id"
+   GCP_BUCKET_NAME="your-bucket-name"
+   GCP_SERVICE_ACCOUNT_KEY="base64-encoded-service-account-json"
+   ```
+
+4. **Set up the database**
+   ```bash
+   pnpm prisma generate
+   pnpm prisma migrate dev
+   ```
+
+5. **Run the development server**
+   ```bash
+   pnpm dev
+   ```
+
+   Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## 🔑 Setting Up Google OAuth
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select an existing one
+3. Enable Google+ API
+4. Go to Credentials → Create Credentials → OAuth 2.0 Client ID
+5. Add authorized redirect URI: `http://localhost:3000/api/auth/callback/google`
+6. Copy Client ID and Client Secret to your `.env` file
+
+## ☁️ Setting Up Google Cloud Storage (Optional)
+
+1. Create a bucket in Google Cloud Storage
+2. Create a service account with Storage Admin role
+3. Generate a JSON key for the service account
+4. Base64 encode the JSON key: `base64 -i service-account.json`
+5. Add the encoded key to `GCP_SERVICE_ACCOUNT_KEY` in `.env`
+
+## 📁 Project Structure
+
+```
+resume-generator/
+├── app/
+│   ├── api/              # API routes
+│   ├── dashboard/        # Dashboard page
+│   ├── resume/           # Resume pages (new, edit, view)
+│   ├── layout.tsx
+│   └── page.tsx          # Landing page
+├── components/
+│   ├── dashboard/        # Dashboard components
+│   ├── forms/            # Resume form components
+│   ├── ui/               # shadcn/ui components
+│   └── viewer/           # Resume preview component
+├── lib/
+│   ├── validations/      # Zod schemas
+│   ├── prisma.ts         # Prisma client
+│   ├── storage.ts        # GCS utilities
+│   └── utils.ts          # Utility functions
+├── prisma/
+│   └── schema.prisma     # Database schema
+├── types/
+│   └── resume.ts         # TypeScript types
+├── auth.ts               # NextAuth configuration
+└── middleware.ts         # Route protection
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🎨 Resume Data Structure
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Resumes are stored as JSON with the following structure:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Contact Information**: Name, title, email, phone, location, social links
+- **Professional Summary**: Brief overview
+- **Technical Skills**: Languages, frameworks, databases, tools, cloud platforms
+- **Work Experience**: Job history with achievements and technologies
+- **Projects**: Personal/professional projects
+- **Education**: Academic background
+- **Certifications**: Professional certifications
 
-## Learn More
+## 🚀 Deployment
 
-To learn more about Next.js, take a look at the following resources:
+### Vercel (Recommended)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Push your code to GitHub
+2. Import project in Vercel
+3. Add environment variables
+4. Deploy
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Database Hosting
 
-## Deploy on Vercel
+- **Vercel Postgres**
+- **Railway**
+- **Supabase**
+- **Neon**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📝 Usage
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Sign In** - Use Google OAuth to authenticate
+2. **Create Resume** - Fill in your information using the comprehensive form
+3. **Save Versions** - Create multiple versions for different job applications
+4. **Preview** - View your resume in a professional layout
+5. **Export PDF** - Download as PDF for job applications
+6. **Share** - Upload to cloud and share via public link
+
+## 🔒 Security
+
+- All routes are protected with NextAuth middleware
+- User data is isolated by userId
+- Soft delete for resumes (isActive flag)
+- Environment variables for sensitive data
+- CORS and CSRF protection built-in
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+MIT License - feel free to use this project for personal or commercial purposes.
+
+## 🐛 Known Issues
+
+- PDF generation may have layout issues with very long content
+- GCS upload requires proper service account configuration
+- First-time setup requires manual database migration
+
+## 📧 Support
+
+For issues and questions, please open an issue on GitHub.
+
+---
+
+Built with ❤️ using Next.js, Prisma, and Google Cloud
