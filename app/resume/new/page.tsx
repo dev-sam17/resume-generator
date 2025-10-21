@@ -13,27 +13,20 @@ export default async function NewResumePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-6">
-          <Link href="/dashboard">
-            <Button variant="ghost" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Dashboard
-            </Button>
-          </Link>
-        </div>
+    <div className="h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+      {/* Top Navigation Bar */}
+      <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-6 py-4">
+        <Link href="/dashboard">
+          <Button variant="ghost" size="sm">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Dashboard
+          </Button>
+        </Link>
+      </div>
 
-        <div className="max-w-4xl mx-auto">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Create New Resume</h1>
-            <p className="text-gray-600 mt-2">
-              Fill in your information to create a professional resume
-            </p>
-          </div>
-
-          <ResumeForm mode="create" />
-        </div>
+      {/* Full Width Split Screen */}
+      <div className="flex-1 overflow-hidden">
+        <ResumeForm mode="create" />
       </div>
     </div>
   )

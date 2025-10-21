@@ -45,22 +45,22 @@ export function ResumeCard({ resume }: { resume: Resume }) {
   }
 
   return (
-    <Card className="hover:shadow-lg transition-shadow">
+    <Card className="hover:shadow-lg transition-shadow dark:bg-gray-800 dark:border-gray-700">
       <CardHeader>
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <CardTitle className="text-xl">{resume.title}</CardTitle>
+            <CardTitle className="text-xl dark:text-white">{resume.title}</CardTitle>
             {resume.versionName && (
-              <CardDescription className="mt-1">
+              <CardDescription className="mt-1 dark:text-gray-300">
                 {resume.versionName}
               </CardDescription>
             )}
           </div>
-          <FileText className="h-5 w-5 text-gray-400" />
+          <FileText className="h-5 w-5 text-gray-400 dark:text-gray-500" />
         </div>
       </CardHeader>
       <CardContent>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           Last updated: {format(new Date(resume.updatedAt), "MMM d, yyyy")}
         </p>
       </CardContent>

@@ -173,7 +173,7 @@ export default function ViewResumePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4 py-8">
         {/* Header Actions */}
         <div className="mb-6 flex items-center justify-between">
@@ -211,16 +211,16 @@ export default function ViewResumePage() {
 
         {/* Resume Info */}
         <div className="mb-6 text-center">
-          <h1 className="text-2xl font-bold text-gray-900">{resume.title}</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{resume.title}</h1>
           {resume.versionName && (
-            <p className="text-gray-600">{resume.versionName}</p>
+            <p className="text-gray-600 dark:text-gray-300">{resume.versionName}</p>
           )}
           {resume.pdfUrl && (
             <a
               href={resume.pdfUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-blue-600 hover:underline mt-2 inline-block"
+              className="text-sm text-blue-600 dark:text-blue-400 hover:underline mt-2 inline-block"
             >
               View Shared PDF →
             </a>
