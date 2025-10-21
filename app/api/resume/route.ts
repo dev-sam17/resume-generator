@@ -7,8 +7,18 @@ export async function GET(request: NextRequest) {
   try {
     const session = await auth()
     
+    console.log("Session in GET /api/resume:", JSON.stringify(session, null, 2))
+    
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      console.log("No user ID in session. Session:", session)
+      return NextResponse.json({ 
+        error: "Unauthorized", 
+        debug: { 
+          hasSession: !!session, 
+          hasUser: !!session?.user,
+          userId: session?.user?.id 
+        } 
+      }, { status: 401 })
     }
 
     const resumes = await prisma.resume.findMany({
