@@ -64,6 +64,21 @@ export function CertificationsSection({
                   register={register(`data.certifications.${index}.date`)}
                   helpText="When you received this certification"
                 />
+                <FormField
+                  label="Certificate ID"
+                  register={register(`data.certifications.${index}.certificateId`)}
+                  placeholder="ABC123XYZ"
+                  helpText="Optional credential ID or number"
+                />
+                <div className="md:col-span-2">
+                  <FormField
+                    label="Certificate Link"
+                    type="url"
+                    register={register(`data.certifications.${index}.certificateLink`)}
+                    placeholder="https://verify.example.com/cert/123"
+                    helpText="Optional verification or credential URL"
+                  />
+                </div>
               </div>
             </DynamicListItem>
           ))

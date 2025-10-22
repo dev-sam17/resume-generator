@@ -48,6 +48,8 @@ export const certificationSchema = z.object({
   name: z.string().min(1, "Certification name is required"),
   authority: z.string().min(1, "Issuing authority is required"),
   date: z.string().min(1, "Date is required"),
+  certificateId: z.string().optional(),
+  certificateLink: z.string().url().optional().or(z.literal("")),
 })
 
 export const resumeDataSchema = z.object({

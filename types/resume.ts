@@ -46,6 +46,8 @@ export interface Certification {
   name: string
   authority: string
   date: string
+  certificateId?: string
+  certificateLink?: string
 }
 
 export interface ResumeData {

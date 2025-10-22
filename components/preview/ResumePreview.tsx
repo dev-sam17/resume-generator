@@ -47,6 +47,8 @@ interface ResumeData {
     name: string;
     authority: string;
     date: string;
+    certificateId?: string;
+    certificateLink?: string;
   }>;
 }
 
@@ -287,10 +289,21 @@ export function ResumePreview({ data }: ResumePreviewProps) {
             {data.certifications.map((cert, index) => (
               <div key={index}>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  {cert.name}
+                  {cert.certificateLink ? (
+                    <a href={cert.certificateLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">
+                      {cert.name}
+                    </a>
+                  ) : (
+                    cert.name
+                  )}
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400">
                   {cert.authority} • {cert.date}
+                  {cert.certificateId && (
+                    <span className="ml-2 text-sm text-gray-500 dark:text-gray-500">
+                      (ID: {cert.certificateId})
+                    </span>
+                  )}
                 </p>
               </div>
             ))}
