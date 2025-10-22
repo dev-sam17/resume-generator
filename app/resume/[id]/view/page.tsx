@@ -57,6 +57,22 @@ export default function ViewResumePage() {
         scale: 2,
         useCORS: true,
         logging: false,
+        backgroundColor: "#ffffff",
+        onclone: (clonedDoc) => {
+          // Force all elements to use computed RGB values instead of oklch
+          const allElements = clonedDoc.querySelectorAll("*");
+          allElements.forEach((el: any) => {
+            const computed = window.getComputedStyle(el);
+            // Override with computed RGB values
+            el.style.color = computed.color;
+            el.style.backgroundColor = computed.backgroundColor;
+            el.style.borderColor = computed.borderColor;
+            el.style.borderTopColor = computed.borderTopColor;
+            el.style.borderRightColor = computed.borderRightColor;
+            el.style.borderBottomColor = computed.borderBottomColor;
+            el.style.borderLeftColor = computed.borderLeftColor;
+          });
+        },
       })
 
       const imgData = canvas.toDataURL("image/png")
@@ -104,6 +120,22 @@ export default function ViewResumePage() {
         scale: 2,
         useCORS: true,
         logging: false,
+        backgroundColor: "#ffffff",
+        onclone: (clonedDoc) => {
+          // Force all elements to use computed RGB values instead of oklch
+          const allElements = clonedDoc.querySelectorAll("*");
+          allElements.forEach((el: any) => {
+            const computed = window.getComputedStyle(el);
+            // Override with computed RGB values
+            el.style.color = computed.color;
+            el.style.backgroundColor = computed.backgroundColor;
+            el.style.borderColor = computed.borderColor;
+            el.style.borderTopColor = computed.borderTopColor;
+            el.style.borderRightColor = computed.borderRightColor;
+            el.style.borderBottomColor = computed.borderBottomColor;
+            el.style.borderLeftColor = computed.borderLeftColor;
+          });
+        },
       })
 
       const imgData = canvas.toDataURL("image/png")

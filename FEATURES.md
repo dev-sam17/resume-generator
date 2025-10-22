@@ -162,7 +162,7 @@ Each resume contains:
 - **shadcn/ui Components**: Consistent, accessible UI
 - **Tailwind CSS**: Utility-first styling
 - **Responsive**: Mobile-first design
-- **Dark Mode**: Theme support (future enhancement)
+- **Dark Mode**: Full dark mode support with toggle (default: dark)
 - **Animations**: Smooth transitions
 
 #### Accessibility

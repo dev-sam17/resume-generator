@@ -39,21 +39,26 @@ export function AutocompleteInput({
 
   // Update filtered suggestions when input changes
   useEffect(() => {
-    if (inputValue.trim()) {
-      const lastItem = inputValue.split(",").pop()?.trim() || "";
-      if (lastItem) {
-        const filtered = suggestions
-          .filter(
-            (suggestion) =>
-              suggestion.toLowerCase().includes(lastItem.toLowerCase()) &&
-              !selectedSkills.includes(suggestion)
-          )
-          .slice(0, 10); // Limit to 10 suggestions
-        setFilteredSuggestions(filtered);
-        setShowSuggestions(filtered.length > 0);
-      } else {
-        setShowSuggestions(false);
-      }
+    const lastItem = inputValue.split(",").pop()?.trim() || "";
+    
+    // Show all available suggestions if there's a trailing comma or empty last item
+    if (inputValue.endsWith(", ") || lastItem === "") {
+      const filtered = suggestions
+        .filter((suggestion) => !selectedSkills.includes(suggestion))
+        .slice(0, 10); // Limit to 10 suggestions
+      setFilteredSuggestions(filtered);
+      setShowSuggestions(filtered.length > 0 && inputValue.length > 0);
+    } else if (lastItem) {
+      // Filter suggestions based on what user is typing
+      const filtered = suggestions
+        .filter(
+          (suggestion) =>
+            suggestion.toLowerCase().includes(lastItem.toLowerCase()) &&
+            !selectedSkills.includes(suggestion)
+        )
+        .slice(0, 10); // Limit to 10 suggestions
+      setFilteredSuggestions(filtered);
+      setShowSuggestions(filtered.length > 0);
     } else {
       setShowSuggestions(false);
     }
@@ -87,15 +92,13 @@ export function AutocompleteInput({
       const newSkills = [...selectedSkills, skill];
       setSelectedSkills(newSkills);
       
-      // Update input value
-      const items = inputValue.split(",").map((s) => s.trim());
-      items.pop(); // Remove the last incomplete item
-      const newValue = newSkills.join(", ");
+      // Update input value with trailing comma and space for next input
+      const newValue = newSkills.join(", ") + ", ";
       setInputValue(newValue);
       
-      // Notify parent
+      // Notify parent with the clean value (without trailing comma)
       if (onChange) {
-        onChange(newValue);
+        onChange(newSkills.join(", "));
       }
     }
     setShowSuggestions(false);
