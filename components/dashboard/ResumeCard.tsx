@@ -46,34 +46,34 @@ export function ResumeCard({ resume }: { resume: Resume }) {
 
   return (
     <Card className="hover:shadow-lg transition-shadow dark:bg-gray-800 dark:border-gray-700">
-      <CardHeader>
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <CardTitle className="text-xl dark:text-white">{resume.title}</CardTitle>
+      <CardHeader className="pb-3 sm:pb-6">
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex-1 min-w-0">
+            <CardTitle className="text-base sm:text-xl dark:text-white truncate">{resume.title}</CardTitle>
             {resume.versionName && (
-              <CardDescription className="mt-1 dark:text-gray-300">
+              <CardDescription className="mt-1 dark:text-gray-300 text-xs sm:text-sm truncate">
                 {resume.versionName}
               </CardDescription>
             )}
           </div>
-          <FileText className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+          <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 dark:text-gray-500 flex-shrink-0" />
         </div>
       </CardHeader>
-      <CardContent>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
+      <CardContent className="pb-3 sm:pb-6">
+        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
           Last updated: {format(new Date(resume.updatedAt), "MMM d, yyyy")}
         </p>
       </CardContent>
-      <CardFooter className="flex gap-2">
+      <CardFooter className="flex gap-1.5 sm:gap-2 pt-3 sm:pt-6">
         <Link href={`/resume/${resume.id}/view`} className="flex-1">
-          <Button variant="outline" size="sm" className="w-full">
-            <Eye className="h-4 w-4 mr-2" />
+          <Button variant="outline" size="sm" className="w-full text-xs sm:text-sm h-8 sm:h-9">
+            <Eye className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
             View
           </Button>
         </Link>
         <Link href={`/resume/${resume.id}/edit`} className="flex-1">
-          <Button variant="outline" size="sm" className="w-full">
-            <Edit className="h-4 w-4 mr-2" />
+          <Button variant="outline" size="sm" className="w-full text-xs sm:text-sm h-8 sm:h-9">
+            <Edit className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
             Edit
           </Button>
         </Link>
@@ -82,8 +82,9 @@ export function ResumeCard({ resume }: { resume: Resume }) {
           size="sm"
           onClick={handleDelete}
           disabled={isDeleting}
+          className="h-8 sm:h-9 px-2 sm:px-3"
         >
-          <Trash2 className="h-4 w-4 text-red-500" />
+          <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 text-red-500" />
         </Button>
       </CardFooter>
     </Card>

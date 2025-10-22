@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createResumeSchema } from "@/lib/validations/resume";
@@ -29,7 +29,18 @@ interface ResumeFormProps {
 export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
-  const [showPreview, setShowPreview] = useState(true);
+  // Hide preview on mobile by default, show on desktop
+  const [showPreview, setShowPreview] = useState(false);
+  
+  // Show preview by default on desktop
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setShowPreview(window.innerWidth >= 1024);
+    };
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   const defaultData: FormData = initialData || {
     title: "",
@@ -188,20 +199,20 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
   };
 
   return (
-    <div className="flex h-full overflow-hidden">
+    <div className="flex flex-col lg:flex-row h-full overflow-hidden">
       {/* Form Section - Left Side */}
-      <div className={`transition-all duration-300 ${showPreview ? 'w-1/2' : 'w-full'} overflow-y-auto px-6`}>
+      <div className={`transition-all duration-300 ${showPreview ? 'hidden lg:block lg:w-1/2' : 'w-full'} overflow-y-auto px-3 sm:px-6`}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 py-6 pb-24">
           {/* Header */}
-          <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 p-8 rounded-2xl shadow-xl sticky top-0 z-10">
+          <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 p-4 sm:p-6 lg:p-8 rounded-xl lg:rounded-2xl shadow-xl sticky top-0 z-10">
             <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-            <div className="relative z-10 flex items-center justify-between">
-              <div>
-                <h2 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-                  <FileText className="h-8 w-8" />
-                  {mode === "create" ? "Create New Resume" : "Edit Resume"}
+            <div className="relative z-10 flex items-center justify-between gap-2">
+              <div className="flex-1 min-w-0">
+                <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-1 sm:mb-2 flex items-center gap-2 sm:gap-3">
+                  <FileText className="h-5 w-5 sm:h-6 sm:w-6 lg:h-8 lg:w-8 flex-shrink-0" />
+                  <span className="truncate">{mode === "create" ? "Create New Resume" : "Edit Resume"}</span>
                 </h2>
-                <p className="text-white/90 text-lg">
+                <p className="text-white/90 text-xs sm:text-sm lg:text-lg hidden sm:block">
                   Fill in your information to build a professional resume. All fields marked with * are required.
                 </p>
               </div>
@@ -210,9 +221,12 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
                 onClick={() => setShowPreview(!showPreview)}
                 variant="secondary"
                 size="sm"
-                className="bg-white/20 hover:bg-white/30 text-white border-0"
+                className="bg-white/20 hover:bg-white/30 text-white border-0 flex-shrink-0"
               >
-                {showPreview ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                {showPreview ? <EyeOff className="h-4 w-4 sm:h-5 sm:w-5" /> : <Eye className="h-4 w-4 sm:h-5 sm:w-5" />}
+                <span className="ml-1 sm:ml-2 text-xs sm:text-sm hidden sm:inline">
+                  {showPreview ? "Hide" : "Show"}
+                </span>
               </Button>
             </div>
           </div>
@@ -330,15 +344,28 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
 
       {/* Preview Section - Right Side */}
       {showPreview && (
-        <div className="w-1/2 overflow-y-auto bg-gray-50 dark:bg-gray-900 p-6 border-l-2 border-gray-200 dark:border-gray-700">
-          <div className="sticky top-0 bg-gray-50 dark:bg-gray-900 pb-4 mb-4 z-10">
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-              <Eye className="h-6 w-6 text-purple-600 dark:text-purple-400" />
-              Live Preview
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-              See your resume update in real-time as you type
-            </p>
+        <div className="w-full lg:w-1/2 overflow-y-auto bg-gray-50 dark:bg-gray-900 p-3 sm:p-4 lg:p-6 border-t-2 lg:border-t-0 lg:border-l-2 border-gray-200 dark:border-gray-700">
+          <div className="sticky top-0 bg-gray-50 dark:bg-gray-900 pb-3 sm:pb-4 mb-3 sm:mb-4 z-10 border-b border-gray-200 dark:border-gray-700 lg:border-0">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                  <Eye className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600 dark:text-purple-400" />
+                  Live Preview
+                </h3>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  See your resume update in real-time as you type
+                </p>
+              </div>
+              <Button
+                type="button"
+                onClick={() => setShowPreview(false)}
+                variant="ghost"
+                size="sm"
+                className="lg:hidden"
+              >
+                <EyeOff className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
           <ResumePreview data={watchedData.data} />
         </div>

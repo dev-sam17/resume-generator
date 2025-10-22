@@ -14,17 +14,17 @@ export default async function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-purple-950/20 dark:to-blue-950/20">
       {/* Header */}
-      <header className="container mx-auto px-4 py-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3 group">
-            <div className="p-2 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl shadow-lg group-hover:shadow-xl transition-shadow">
-              <FileText className="h-6 w-6 text-white" />
+      <header className="container mx-auto px-3 sm:px-4 py-4 sm:py-6">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 sm:gap-3 group">
+            <div className="p-1.5 sm:p-2 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg sm:rounded-xl shadow-lg group-hover:shadow-xl transition-shadow">
+              <FileText className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
             </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <span className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
               ResumeGen
             </span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <ThemeToggle />
             <form
               action={async () => {
@@ -32,7 +32,7 @@ export default async function Home() {
                 await signIn("google", { redirectTo: "/dashboard" });
               }}
             >
-              <Button type="submit" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all">
+              <Button type="submit" size="sm" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all text-xs sm:text-sm">
                 Sign In
               </Button>
             </form>
@@ -41,16 +41,16 @@ export default async function Home() {
       </header>
 
       {/* Hero Section */}
-      <main className="container mx-auto px-4 py-20">
+      <main className="container mx-auto px-3 sm:px-4 py-10 sm:py-16 lg:py-20">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 dark:from-blue-900/40 dark:via-purple-900/40 dark:to-pink-900/40 text-transparent bg-clip-text px-6 py-3 rounded-full text-sm font-bold mb-8 border-2 border-purple-200 dark:border-purple-800 shadow-lg">
-            <Sparkles className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 dark:from-blue-900/40 dark:via-purple-900/40 dark:to-pink-900/40 text-transparent bg-clip-text px-3 sm:px-6 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-bold mb-6 sm:mb-8 border-2 border-purple-200 dark:border-purple-800 shadow-lg">
+            <Sparkles className="h-3 w-3 sm:h-4 sm:w-4 text-purple-600 dark:text-purple-400" />
             <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
               Build Professional Resumes in Minutes
             </span>
           </div>
 
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6 leading-tight px-2">
             Create, Manage & Share
             <br />
             <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
@@ -58,7 +58,7 @@ export default async function Home() {
             </span>
           </h1>
 
-          <p className="text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg lg:text-xl text-gray-600 dark:text-gray-300 mb-8 sm:mb-12 max-w-2xl mx-auto px-4">
             Build tailored resumes for different job roles. Export as PDF, share
             via cloud links, and manage all your professional profiles in one
             place.
@@ -70,48 +70,48 @@ export default async function Home() {
               await signIn("google", { redirectTo: "/dashboard" });
             }}
           >
-            <Button type="submit" size="lg" className="text-lg px-8 py-6">
+            <Button type="submit" size="lg" className="text-sm sm:text-base lg:text-lg px-6 sm:px-8 py-5 sm:py-6 w-full sm:w-auto">
               Get Started with Google
             </Button>
           </form>
         </div>
 
         {/* Features Grid */}
-        <div className="grid md:grid-cols-3 gap-8 mt-24 max-w-5xl mx-auto">
-          <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-            <div className="bg-blue-100 dark:bg-blue-900/30 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-              <FileText className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mt-12 sm:mt-16 lg:mt-24 max-w-5xl mx-auto">
+          <div className="bg-white dark:bg-gray-800 p-5 sm:p-6 lg:p-8 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+            <div className="bg-blue-100 dark:bg-blue-900/30 w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
+              <FileText className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600 dark:text-blue-400" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-2">
               Multiple Versions
             </h3>
-            <p className="text-gray-600 dark:text-gray-300">
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
               Create different resume versions tailored for specific job roles
               and industries.
             </p>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-            <div className="bg-purple-100 dark:bg-purple-900/30 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-              <Download className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+          <div className="bg-white dark:bg-gray-800 p-5 sm:p-6 lg:p-8 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+            <div className="bg-purple-100 dark:bg-purple-900/30 w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
+              <Download className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600 dark:text-purple-400" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-2">
               PDF Export
             </h3>
-            <p className="text-gray-600 dark:text-gray-300">
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
               Export your resume as a professional PDF with clean, print-ready
               formatting.
             </p>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-            <div className="bg-green-100 dark:bg-green-900/30 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-              <Share2 className="h-6 w-6 text-green-600 dark:text-green-400" />
+          <div className="bg-white dark:bg-gray-800 p-5 sm:p-6 lg:p-8 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 sm:col-span-2 md:col-span-1">
+            <div className="bg-green-100 dark:bg-green-900/30 w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
+              <Share2 className="h-5 w-5 sm:h-6 sm:w-6 text-green-600 dark:text-green-400" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-2">
               Cloud Sharing
             </h3>
-            <p className="text-gray-600 dark:text-gray-300">
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
               Share your resume via secure cloud links with recruiters and
               employers.
             </p>
@@ -120,8 +120,8 @@ export default async function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="container mx-auto px-4 py-8 mt-20 border-t border-gray-200 dark:border-gray-700">
-        <p className="text-center text-gray-600 dark:text-gray-400">
+      <footer className="container mx-auto px-3 sm:px-4 py-6 sm:py-8 mt-12 sm:mt-16 lg:mt-20 border-t border-gray-200 dark:border-gray-700">
+        <p className="text-center text-xs sm:text-sm text-gray-600 dark:text-gray-400">
           Built with Next.js, Prisma, and Google Cloud Storage
         </p>
       </footer>

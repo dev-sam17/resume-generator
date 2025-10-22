@@ -29,14 +29,14 @@ export default async function DashboardPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <FileText className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-              <span className="text-2xl font-bold text-gray-900 dark:text-white">ResumeGen</span>
+        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <FileText className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 dark:text-blue-400" />
+              <span className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">ResumeGen</span>
             </div>
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600 dark:text-gray-300">{session.user.email}</span>
+            <div className="flex items-center gap-1.5 sm:gap-4">
+              <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 hidden md:inline truncate max-w-[150px] lg:max-w-none">{session.user.email}</span>
               <ThemeToggle />
               <form
                 action={async () => {
@@ -44,9 +44,10 @@ export default async function DashboardPage() {
                   await signOut({ redirectTo: "/" })
                 }}
               >
-                <Button type="submit" variant="ghost" size="sm">
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Sign Out
+                <Button type="submit" variant="ghost" size="sm" className="text-xs sm:text-sm">
+                  <LogOut className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Sign Out</span>
+                  <span className="sm:hidden">Out</span>
                 </Button>
               </form>
             </div>
@@ -55,36 +56,36 @@ export default async function DashboardPage() {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">My Resumes</h1>
-            <p className="text-gray-600 dark:text-gray-300 mt-1">
+      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 lg:py-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 sm:mb-8">
+          <div className="flex-1">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">My Resumes</h1>
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mt-1">
               Manage and create multiple versions of your resume
             </p>
           </div>
-          <Link href="/resume/new">
-            <Button size="lg">
-              <Plus className="h-5 w-5 mr-2" />
-              Create New Resume
+          <Link href="/resume/new" className="w-full sm:w-auto">
+            <Button size="lg" className="w-full sm:w-auto">
+              <Plus className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+              <span className="hidden xs:inline">Create New </span>Resume
             </Button>
           </Link>
         </div>
 
         {resumes.length === 0 ? (
-          <Card className="max-w-2xl mx-auto mt-12 dark:bg-gray-800 dark:border-gray-700">
+          <Card className="max-w-2xl mx-auto mt-8 sm:mt-12 dark:bg-gray-800 dark:border-gray-700">
             <CardHeader className="text-center">
-              <div className="mx-auto bg-blue-100 dark:bg-blue-900/30 w-16 h-16 rounded-full flex items-center justify-center mb-4">
-                <FileText className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+              <div className="mx-auto bg-blue-100 dark:bg-blue-900/30 w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mb-3 sm:mb-4">
+                <FileText className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 dark:text-blue-400" />
               </div>
-              <CardTitle className="dark:text-white">No resumes yet</CardTitle>
-              <CardDescription className="dark:text-gray-300">
+              <CardTitle className="dark:text-white text-lg sm:text-xl">No resumes yet</CardTitle>
+              <CardDescription className="dark:text-gray-300 text-sm">
                 Get started by creating your first resume
               </CardDescription>
             </CardHeader>
             <CardFooter className="justify-center">
-              <Link href="/resume/new">
-                <Button>
+              <Link href="/resume/new" className="w-full sm:w-auto">
+                <Button className="w-full sm:w-auto">
                   <Plus className="h-4 w-4 mr-2" />
                   Create Your First Resume
                 </Button>
@@ -92,7 +93,7 @@ export default async function DashboardPage() {
             </CardFooter>
           </Card>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {resumes.map((resume) => (
               <ResumeCard key={resume.id} resume={resume} />
             ))}
