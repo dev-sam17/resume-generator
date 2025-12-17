@@ -1,41 +1,35 @@
-import { auth, signIn } from "@/auth";
-import { redirect } from "next/navigation";
+"use client";
+
+import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Share2, Download, FileText } from "lucide-react";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
 
-export default async function Home() {
-  const session = await auth();
-
-  if (session?.user) {
-    redirect("/dashboard");
-  }
+export default function Home() {
+  const handleSignIn = async () => {
+    await signIn("google", { callbackUrl: "/dashboard" });
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-purple-950/20 dark:to-blue-950/20">
+    <div className="min-h-screen  bg-gray-900">
       {/* Header */}
       <header className="container mx-auto px-3 sm:px-4 py-4 sm:py-6">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 sm:gap-3 group">
-            <div className="p-1.5 sm:p-2 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg sm:rounded-xl shadow-lg group-hover:shadow-xl transition-shadow">
+            <div className="p-1.5 sm:p-2 bg-linear-to-br from-blue-600 to-purple-600 rounded-lg sm:rounded-xl shadow-lg group-hover:shadow-xl transition-shadow">
               <FileText className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
             </div>
-            <span className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <span className="text-lg sm:text-2xl font-bold bg-linear-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
               ResumeGen
             </span>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
-            <ThemeToggle />
-            <form
-              action={async () => {
-                "use server";
-                await signIn("google", { redirectTo: "/dashboard" });
-              }}
+            <Button
+              onClick={handleSignIn}
+              size="sm"
+              className="bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all text-xs sm:text-sm"
             >
-              <Button type="submit" size="sm" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all text-xs sm:text-sm">
-                Sign In
-              </Button>
-            </form>
+              Sign In
+            </Button>
           </div>
         </div>
       </header>
@@ -43,9 +37,9 @@ export default async function Home() {
       {/* Hero Section */}
       <main className="container mx-auto px-3 sm:px-4 py-10 sm:py-16 lg:py-20">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 dark:from-blue-900/40 dark:via-purple-900/40 dark:to-pink-900/40 text-transparent bg-clip-text px-3 sm:px-6 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-bold mb-6 sm:mb-8 border-2 border-purple-200 dark:border-purple-800 shadow-lg">
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white/60 dark:bg-blue-900/40 px-3 sm:px-6 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-bold mb-6 sm:mb-8 border-2 border-blue-200 dark:border-purple-800 shadow-lg">
             <Sparkles className="h-3 w-3 sm:h-4 sm:w-4 text-purple-600 dark:text-purple-400" />
-            <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
               Build Professional Resumes in Minutes
             </span>
           </div>
@@ -53,7 +47,7 @@ export default async function Home() {
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6 leading-tight px-2">
             Create, Manage & Share
             <br />
-            <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
               Multiple Resume Versions
             </span>
           </h1>
@@ -64,16 +58,13 @@ export default async function Home() {
             place.
           </p>
 
-          <form
-            action={async () => {
-              "use server";
-              await signIn("google", { redirectTo: "/dashboard" });
-            }}
+          <Button
+            onClick={handleSignIn}
+            size="lg"
+            className="text-sm sm:text-base lg:text-lg px-6 sm:px-8 py-5 sm:py-6 w-full sm:w-auto"
           >
-            <Button type="submit" size="lg" className="text-sm sm:text-base lg:text-lg px-6 sm:px-8 py-5 sm:py-6 w-full sm:w-auto">
-              Get Started with Google
-            </Button>
-          </form>
+            Create Your First Resume
+          </Button>
         </div>
 
         {/* Features Grid */}
