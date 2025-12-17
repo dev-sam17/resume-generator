@@ -155,7 +155,7 @@ export function SkillsSection({ setValue, defaultData }: SkillsSectionProps) {
             variant="outline"
             size="sm"
             onClick={() => setDialogOpen(true)}
-            className="bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/40 dark:to-pink-900/40 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800 hover:scale-105 transition-transform"
+            className="bg-linear-to-br from-purple-100 to-pink-100 dark:from-purple-900/40 dark:to-pink-900/40 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800 hover:scale-105 transition-transform"
           >
             <Eye className="h-4 w-4 mr-2" />
             View All ({totalSuggestions})
@@ -265,7 +265,7 @@ export function SkillsSection({ setValue, defaultData }: SkillsSectionProps) {
                         <Badge
                           key={index}
                           variant="secondary"
-                          className="bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/40 dark:to-pink-900/40 text-purple-700 dark:text-purple-300 border-0"
+                          className="bg-linear-to-r from-purple-100 to-pink-100 dark:from-purple-900/40 dark:to-pink-900/40 text-purple-700 dark:text-purple-300 border-0"
                         >
                           {skill}
                         </Badge>

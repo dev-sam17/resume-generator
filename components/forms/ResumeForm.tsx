@@ -227,12 +227,12 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
           className="space-y-6 py-6 pb-24"
         >
           {/* Header */}
-          <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 p-4 sm:p-6 lg:p-8 rounded-xl lg:rounded-2xl shadow-xl sticky top-0 z-10">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+          <div className="relative overflow-hidden bg-linear-to-r from-blue-600 via-purple-600 to-pink-600 p-4 sm:p-6 lg:p-8 rounded-xl lg:rounded-2xl shadow-xl top-0 z-10">
+            <div className="absolute inset-0 bg-linear-to-br from-white/10 to-transparent"></div>
             <div className="relative z-10 flex items-center justify-between gap-2">
               <div className="flex-1 min-w-0">
                 <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-1 sm:mb-2 flex items-center gap-2 sm:gap-3">
-                  <FileText className="h-5 w-5 sm:h-6 sm:w-6 lg:h-8 lg:w-8 flex-shrink-0" />
+                  <FileText className="h-5 w-5 sm:h-6 sm:w-6 lg:h-8 lg:w-8 shrink-0" />
                   <span className="truncate">
                     {mode === "create" ? "Create New Resume" : "Edit Resume"}
                   </span>
@@ -247,7 +247,7 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
                 onClick={() => setShowPreview(!showPreview)}
                 variant="secondary"
                 size="sm"
-                className="bg-white/20 hover:bg-white/30 text-white border-0 flex-shrink-0"
+                className="bg-white/20 hover:bg-white/30 text-white border-0 shrink-0"
               >
                 {showPreview ? (
                   <EyeOff className="h-4 w-4 sm:h-5 sm:w-5" />
