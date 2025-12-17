@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { FormSection } from "./FormSection";
 import { Code2, Eye, Loader2 } from "lucide-react";
 import { UseFormSetValue } from "react-hook-form";
-import { AutocompleteInput } from "@/components/ui/autocomplete-input";
+import { SkillInput } from "@/components/ui/skill-input";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -110,11 +110,7 @@ export function SkillsSection({ setValue, defaultData }: SkillsSectionProps) {
     fetchSkills();
   }, []);
 
-  const handleSkillChange = (category: string, value: string) => {
-    const values = value
-      .split(",")
-      .map((v) => v.trim())
-      .filter(Boolean);
+  const handleSkillChange = (category: string, values: string[]) => {
     setValue(`data.skills.${category}`, values);
   };
 
@@ -164,77 +160,81 @@ export function SkillsSection({ setValue, defaultData }: SkillsSectionProps) {
       >
         <div className="space-y-4">
           {getCategoryByKey("languages") && (
-            <AutocompleteInput
+            <SkillInput
               label={getCategoryByKey("languages")!.name}
-              placeholder="Start typing to see suggestions..."
+              placeholder="Type and press Enter to add..."
               suggestions={getCategoryByKey("languages")!.skills}
-              defaultValue={defaultData.data.skills.languages.join(", ")}
-              onChange={(value) => handleSkillChange("languages", value)}
-              helpText={`Type to search from ${
+              defaultValue={defaultData.data.skills.languages || []}
+              onChange={(values) => handleSkillChange("languages", values)}
+              categoryKey="languages"
+              helpText={`${
                 getCategoryByKey("languages")!.count
-              }+ skills, or add your own`}
+              }+ suggestions available. Press Enter to add.`}
             />
           )}
           {getCategoryByKey("frameworks") && (
-            <AutocompleteInput
+            <SkillInput
               label={getCategoryByKey("frameworks")!.name}
-              placeholder="Start typing to see suggestions..."
+              placeholder="Type and press Enter to add..."
               suggestions={getCategoryByKey("frameworks")!.skills}
-              defaultValue={defaultData.data.skills.frameworks.join(", ")}
-              onChange={(value) => handleSkillChange("frameworks", value)}
-              helpText={`Type to search from ${
+              defaultValue={defaultData.data.skills.frameworks || []}
+              onChange={(values) => handleSkillChange("frameworks", values)}
+              categoryKey="frameworks"
+              helpText={`${
                 getCategoryByKey("frameworks")!.count
-              }+ skills, or add your own`}
+              }+ suggestions available. Press Enter to add.`}
             />
           )}
           {getCategoryByKey("databases") && (
-            <AutocompleteInput
+            <SkillInput
               label={getCategoryByKey("databases")!.name}
-              placeholder="Start typing to see suggestions..."
+              placeholder="Type and press Enter to add..."
               suggestions={getCategoryByKey("databases")!.skills}
-              defaultValue={defaultData.data.skills.databases.join(", ")}
-              onChange={(value) => handleSkillChange("databases", value)}
-              helpText={`Type to search from ${
+              defaultValue={defaultData.data.skills.databases || []}
+              onChange={(values) => handleSkillChange("databases", values)}
+              categoryKey="databases"
+              helpText={`${
                 getCategoryByKey("databases")!.count
-              }+ skills, or add your own`}
+              }+ suggestions available. Press Enter to add.`}
             />
           )}
           {getCategoryByKey("tools") && (
-            <AutocompleteInput
+            <SkillInput
               label={getCategoryByKey("tools")!.name}
-              placeholder="Start typing to see suggestions..."
+              placeholder="Type and press Enter to add..."
               suggestions={getCategoryByKey("tools")!.skills}
-              defaultValue={defaultData.data.skills.tools.join(", ")}
-              onChange={(value) => handleSkillChange("tools", value)}
-              helpText={`Type to search from ${
+              defaultValue={defaultData.data.skills.tools || []}
+              onChange={(values) => handleSkillChange("tools", values)}
+              categoryKey="tools"
+              helpText={`${
                 getCategoryByKey("tools")!.count
-              }+ skills, or add your own`}
+              }+ suggestions available. Press Enter to add.`}
             />
           )}
           {getCategoryByKey("cloud") && (
-            <AutocompleteInput
+            <SkillInput
               label={getCategoryByKey("cloud")!.name}
-              placeholder="Start typing to see suggestions..."
+              placeholder="Type and press Enter to add..."
               suggestions={getCategoryByKey("cloud")!.skills}
-              defaultValue={defaultData.data.skills.cloud.join(", ")}
-              onChange={(value) => handleSkillChange("cloud", value)}
-              helpText={`Type to search from ${
+              defaultValue={defaultData.data.skills.cloud || []}
+              onChange={(values) => handleSkillChange("cloud", values)}
+              categoryKey="cloud"
+              helpText={`${
                 getCategoryByKey("cloud")!.count
-              }+ skills, or add your own`}
+              }+ suggestions available. Press Enter to add.`}
             />
           )}
           {getCategoryByKey("methodologies") && (
-            <AutocompleteInput
+            <SkillInput
               label={getCategoryByKey("methodologies")!.name}
-              placeholder="Start typing to see suggestions..."
+              placeholder="Type and press Enter to add..."
               suggestions={getCategoryByKey("methodologies")!.skills}
-              defaultValue={
-                defaultData.data.skills.methodologies?.join(", ") || ""
-              }
-              onChange={(value) => handleSkillChange("methodologies", value)}
-              helpText={`Type to search from ${
+              defaultValue={defaultData.data.skills.methodologies || []}
+              onChange={(values) => handleSkillChange("methodologies", values)}
+              categoryKey="methodologies"
+              helpText={`${
                 getCategoryByKey("methodologies")!.count
-              }+ skills, or add your own`}
+              }+ suggestions available. Press Enter to add.`}
             />
           )}
         </div>
