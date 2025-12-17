@@ -59,18 +59,47 @@ export default function ViewResumePage() {
         logging: false,
         backgroundColor: "#ffffff",
         onclone: (clonedDoc) => {
-          // Force all elements to use computed RGB values instead of oklch
+          // Convert all color values to RGB format to avoid lab/oklch parsing issues
           const allElements = clonedDoc.querySelectorAll("*");
           allElements.forEach((el: any) => {
             const computed = window.getComputedStyle(el);
-            // Override with computed RGB values
-            el.style.color = computed.color;
-            el.style.backgroundColor = computed.backgroundColor;
-            el.style.borderColor = computed.borderColor;
-            el.style.borderTopColor = computed.borderTopColor;
-            el.style.borderRightColor = computed.borderRightColor;
-            el.style.borderBottomColor = computed.borderBottomColor;
-            el.style.borderLeftColor = computed.borderLeftColor;
+
+            // Helper to convert any color to RGB
+            const toRGB = (color: string) => {
+              if (!color || color === "transparent" || color === "none")
+                return color;
+              const temp = document.createElement("div");
+              temp.style.color = color;
+              document.body.appendChild(temp);
+              const rgb = window.getComputedStyle(temp).color;
+              document.body.removeChild(temp);
+              return rgb;
+            };
+
+            // Override all color properties with RGB values
+            if (computed.color) el.style.color = toRGB(computed.color);
+            if (computed.backgroundColor)
+              el.style.backgroundColor = toRGB(computed.backgroundColor);
+            if (computed.borderColor)
+              el.style.borderColor = toRGB(computed.borderColor);
+            if (computed.borderTopColor)
+              el.style.borderTopColor = toRGB(computed.borderTopColor);
+            if (computed.borderRightColor)
+              el.style.borderRightColor = toRGB(computed.borderRightColor);
+            if (computed.borderBottomColor)
+              el.style.borderBottomColor = toRGB(computed.borderBottomColor);
+            if (computed.borderLeftColor)
+              el.style.borderLeftColor = toRGB(computed.borderLeftColor);
+            if (computed.outlineColor)
+              el.style.outlineColor = toRGB(computed.outlineColor);
+
+            // Remove any gradient backgrounds that might use lab/oklch
+            if (
+              computed.backgroundImage &&
+              computed.backgroundImage !== "none"
+            ) {
+              el.style.backgroundImage = "none";
+            }
           });
         },
       });
@@ -122,18 +151,47 @@ export default function ViewResumePage() {
         logging: false,
         backgroundColor: "#ffffff",
         onclone: (clonedDoc) => {
-          // Force all elements to use computed RGB values instead of oklch
+          // Convert all color values to RGB format to avoid lab/oklch parsing issues
           const allElements = clonedDoc.querySelectorAll("*");
           allElements.forEach((el: any) => {
             const computed = window.getComputedStyle(el);
-            // Override with computed RGB values
-            el.style.color = computed.color;
-            el.style.backgroundColor = computed.backgroundColor;
-            el.style.borderColor = computed.borderColor;
-            el.style.borderTopColor = computed.borderTopColor;
-            el.style.borderRightColor = computed.borderRightColor;
-            el.style.borderBottomColor = computed.borderBottomColor;
-            el.style.borderLeftColor = computed.borderLeftColor;
+
+            // Helper to convert any color to RGB
+            const toRGB = (color: string) => {
+              if (!color || color === "transparent" || color === "none")
+                return color;
+              const temp = document.createElement("div");
+              temp.style.color = color;
+              document.body.appendChild(temp);
+              const rgb = window.getComputedStyle(temp).color;
+              document.body.removeChild(temp);
+              return rgb;
+            };
+
+            // Override all color properties with RGB values
+            if (computed.color) el.style.color = toRGB(computed.color);
+            if (computed.backgroundColor)
+              el.style.backgroundColor = toRGB(computed.backgroundColor);
+            if (computed.borderColor)
+              el.style.borderColor = toRGB(computed.borderColor);
+            if (computed.borderTopColor)
+              el.style.borderTopColor = toRGB(computed.borderTopColor);
+            if (computed.borderRightColor)
+              el.style.borderRightColor = toRGB(computed.borderRightColor);
+            if (computed.borderBottomColor)
+              el.style.borderBottomColor = toRGB(computed.borderBottomColor);
+            if (computed.borderLeftColor)
+              el.style.borderLeftColor = toRGB(computed.borderLeftColor);
+            if (computed.outlineColor)
+              el.style.outlineColor = toRGB(computed.outlineColor);
+
+            // Remove any gradient backgrounds that might use lab/oklch
+            if (
+              computed.backgroundImage &&
+              computed.backgroundImage !== "none"
+            ) {
+              el.style.backgroundImage = "none";
+            }
           });
         },
       });

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createResumeSchema } from "@/lib/validations/resume";
@@ -15,6 +15,7 @@ import { EducationSection } from "./sections/EducationSection";
 import { CertificationsSection } from "./sections/CertificationsSection";
 import { LayoutSection } from "./sections/LayoutSection";
 import { ResumePreview } from "@/components/preview/ResumePreview";
+import { ToastContainer, ToastType } from "@/components/ui/toast";
 import {
   Save,
   FileText,
@@ -23,9 +24,12 @@ import {
   Eye,
   EyeOff,
   Layout,
+  Download,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 type FormData = z.infer<typeof createResumeSchema>;
 
@@ -38,6 +42,11 @@ interface ResumeFormProps {
 export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [toasts, setToasts] = useState<
+    Array<{ id: string; message: string; type: ToastType }>
+  >([]);
+  const previewRef = useRef<HTMLDivElement>(null);
   // Hide preview on mobile by default, show on desktop
   const [showPreview, setShowPreview] = useState(false);
 
@@ -103,6 +112,15 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
     return () => subscription.unsubscribe();
   }, [watch]);
 
+  const showToast = (message: string, type: ToastType = "success") => {
+    const id = Date.now().toString();
+    setToasts((prev) => [...prev, { id, message, type }]);
+  };
+
+  const removeToast = (id: string) => {
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
+  };
+
   const onSubmit = async (data: FormData): Promise<void> => {
     setIsSaving(true);
     try {
@@ -117,15 +135,116 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
 
       if (response.ok) {
         const resume = await response.json();
-        router.push(`/resume/${resume.id}/view`);
+        showToast(
+          mode === "create"
+            ? "Resume created successfully!"
+            : "Resume updated successfully!",
+          "success"
+        );
+        // Update resumeId if creating new resume
+        if (mode === "create" && resume.id) {
+          router.replace(`/resume/${resume.id}/edit`);
+        }
       } else {
-        alert("Failed to save resume");
+        showToast("Failed to save resume", "error");
       }
     } catch (error) {
       console.error("Error saving resume:", error);
-      alert("Failed to save resume");
+      showToast("Failed to save resume", "error");
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleDownloadPDF = async () => {
+    setIsExporting(true);
+    try {
+      const element = previewRef.current;
+      if (!element) return;
+
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: "#ffffff",
+        onclone: (clonedDoc) => {
+          // Convert all color values to RGB format to avoid lab/oklch parsing issues
+          const allElements = clonedDoc.querySelectorAll("*");
+          allElements.forEach((el: any) => {
+            const computed = window.getComputedStyle(el);
+
+            // Helper to convert any color to RGB
+            const toRGB = (color: string) => {
+              if (!color || color === "transparent" || color === "none")
+                return color;
+              const temp = document.createElement("div");
+              temp.style.color = color;
+              document.body.appendChild(temp);
+              const rgb = window.getComputedStyle(temp).color;
+              document.body.removeChild(temp);
+              return rgb;
+            };
+
+            // Override all color properties with RGB values
+            if (computed.color) el.style.color = toRGB(computed.color);
+            if (computed.backgroundColor)
+              el.style.backgroundColor = toRGB(computed.backgroundColor);
+            if (computed.borderColor)
+              el.style.borderColor = toRGB(computed.borderColor);
+            if (computed.borderTopColor)
+              el.style.borderTopColor = toRGB(computed.borderTopColor);
+            if (computed.borderRightColor)
+              el.style.borderRightColor = toRGB(computed.borderRightColor);
+            if (computed.borderBottomColor)
+              el.style.borderBottomColor = toRGB(computed.borderBottomColor);
+            if (computed.borderLeftColor)
+              el.style.borderLeftColor = toRGB(computed.borderLeftColor);
+            if (computed.outlineColor)
+              el.style.outlineColor = toRGB(computed.outlineColor);
+
+            // Remove any gradient backgrounds that might use lab/oklch
+            if (
+              computed.backgroundImage &&
+              computed.backgroundImage !== "none"
+            ) {
+              el.style.backgroundImage = "none";
+            }
+          });
+        },
+      });
+
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+      });
+
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+      const imgX = (pdfWidth - imgWidth * ratio) / 2;
+      const imgY = 0;
+
+      pdf.addImage(
+        imgData,
+        "PNG",
+        imgX,
+        imgY,
+        imgWidth * ratio,
+        imgHeight * ratio
+      );
+
+      const fileName = watchedData.title || "resume";
+      pdf.save(`${fileName}.pdf`);
+      showToast("PDF downloaded successfully!", "success");
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      showToast("Failed to generate PDF", "error");
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -413,20 +532,46 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
                   See your resume update in real-time as you type
                 </p>
               </div>
-              <Button
-                type="button"
-                onClick={() => setShowPreview(false)}
-                variant="ghost"
-                size="sm"
-                className="lg:hidden"
-              >
-                <EyeOff className="h-4 w-4" />
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  onClick={handleDownloadPDF}
+                  disabled={isExporting}
+                  variant="outline"
+                  size="sm"
+                >
+                  {isExporting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Exporting...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="h-4 w-4 mr-2" />
+                      Download PDF
+                    </>
+                  )}
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => setShowPreview(false)}
+                  variant="ghost"
+                  size="sm"
+                  className="lg:hidden"
+                >
+                  <EyeOff className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
-          <ResumePreview data={watchedData.data} />
+          <div ref={previewRef}>
+            <ResumePreview data={watchedData.data} />
+          </div>
         </div>
       )}
+
+      {/* Toast Notifications */}
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </div>
   );
 }
