@@ -27,7 +27,12 @@ export function AutocompleteInput({
 }: AutocompleteInputProps) {
   const [inputValue, setInputValue] = useState(defaultValue);
   const [selectedSkills, setSelectedSkills] = useState<string[]>(
-    defaultValue ? defaultValue.split(",").map((s) => s.trim()).filter(Boolean) : []
+    defaultValue
+      ? defaultValue
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
+      : []
   );
   const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -40,7 +45,7 @@ export function AutocompleteInput({
   // Update filtered suggestions when input changes
   useEffect(() => {
     const lastItem = inputValue.split(",").pop()?.trim() || "";
-    
+
     // Show all available suggestions if there's a trailing comma or empty last item
     if (inputValue.endsWith(", ") || lastItem === "") {
       const filtered = suggestions
@@ -91,11 +96,11 @@ export function AutocompleteInput({
     if (!selectedSkills.includes(skill)) {
       const newSkills = [...selectedSkills, skill];
       setSelectedSkills(newSkills);
-      
+
       // Update input value with trailing comma and space for next input
       const newValue = newSkills.join(", ") + ", ";
       setInputValue(newValue);
-      
+
       // Notify parent with the clean value (without trailing comma)
       if (onChange) {
         onChange(newSkills.join(", "));
@@ -110,7 +115,7 @@ export function AutocompleteInput({
     setSelectedSkills(newSkills);
     const newValue = newSkills.join(", ");
     setInputValue(newValue);
-    
+
     if (onChange) {
       onChange(newValue);
     }
@@ -125,7 +130,11 @@ export function AutocompleteInput({
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       setActiveSuggestionIndex((prev) => (prev > 0 ? prev - 1 : 0));
-    } else if (e.key === "Enter" && showSuggestions && filteredSuggestions.length > 0) {
+    } else if (
+      e.key === "Enter" &&
+      showSuggestions &&
+      filteredSuggestions.length > 0
+    ) {
       e.preventDefault();
       addSkill(filteredSuggestions[activeSuggestionIndex]);
     } else if (e.key === "Escape") {
@@ -136,7 +145,7 @@ export function AutocompleteInput({
   return (
     <div className="space-y-2">
       <Label htmlFor={inputId}>{label}</Label>
-      
+
       {/* Selected Skills Badges */}
       {selectedSkills.length > 0 && (
         <div className="flex flex-wrap gap-2 p-2 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
@@ -144,7 +153,7 @@ export function AutocompleteInput({
             <Badge
               key={skill}
               variant="secondary"
-              className="flex items-center gap-1 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/40 dark:to-purple-900/40 text-blue-700 dark:text-blue-300 border-0"
+              className="flex items-center gap-1 bg-linear-to-r from-blue-100 to-purple-100 dark:from-blue-900/40 dark:to-purple-900/40 text-blue-700 dark:text-blue-300 border-0"
             >
               <Check className="h-3 w-3" />
               {skill}
@@ -189,9 +198,9 @@ export function AutocompleteInput({
                 key={suggestion}
                 type="button"
                 onClick={() => addSkill(suggestion)}
-                className={`w-full text-left px-4 py-2.5 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-blue-900/20 dark:hover:to-purple-900/20 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-b-0 ${
+                className={`w-full text-left px-4 py-2.5 hover:bg-linear-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-blue-900/20 dark:hover:to-purple-900/20 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-b-0 ${
                   index === activeSuggestionIndex
-                    ? "bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20"
+                    ? "bg-linear-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20"
                     : ""
                 }`}
               >
