@@ -15,6 +15,7 @@ import {
   DialogBody,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { skillSuggestions } from "@/lib/skillSuggestions";
 
 interface SkillCategory {
   id: string;
@@ -47,8 +48,60 @@ export function SkillsSection({ setValue, defaultData }: SkillsSectionProps) {
         const data = await response.json();
         setCategories(data.categories || []);
       } catch (err) {
-        console.error("Error fetching skills:", err);
-        setError("Failed to load skills. Please refresh the page.");
+        console.warn("Database not available, using fallback skills:", err);
+        // Fallback to hardcoded skills if database is not ready
+        const fallbackCategories: SkillCategory[] = [
+          {
+            id: "fallback-1",
+            name: "Programming Languages",
+            key: "languages",
+            description: "Programming and scripting languages",
+            skills: skillSuggestions.languages,
+            count: skillSuggestions.languages.length,
+          },
+          {
+            id: "fallback-2",
+            name: "Frameworks & Libraries",
+            key: "frameworks",
+            description: "Frontend, backend, and testing frameworks",
+            skills: skillSuggestions.frameworks,
+            count: skillSuggestions.frameworks.length,
+          },
+          {
+            id: "fallback-3",
+            name: "Databases & ORMs",
+            key: "databases",
+            description: "SQL, NoSQL databases and ORMs",
+            skills: skillSuggestions.databases,
+            count: skillSuggestions.databases.length,
+          },
+          {
+            id: "fallback-4",
+            name: "Tools & Technologies",
+            key: "tools",
+            description: "Development tools, IDEs, and utilities",
+            skills: skillSuggestions.tools,
+            count: skillSuggestions.tools.length,
+          },
+          {
+            id: "fallback-5",
+            name: "Cloud Platforms",
+            key: "cloud",
+            description: "Cloud services and infrastructure",
+            skills: skillSuggestions.cloud,
+            count: skillSuggestions.cloud.length,
+          },
+          {
+            id: "fallback-6",
+            name: "Methodologies & Practices",
+            key: "methodologies",
+            description: "Development methodologies and best practices",
+            skills: skillSuggestions.methodologies,
+            count: skillSuggestions.methodologies.length,
+          },
+        ];
+        setCategories(fallbackCategories);
+        setError(null);
       } finally {
         setLoading(false);
       }
@@ -84,21 +137,6 @@ export function SkillsSection({ setValue, defaultData }: SkillsSectionProps) {
           <span className="ml-3 text-gray-600 dark:text-gray-400">
             Loading skills...
           </span>
-        </div>
-      </FormSection>
-    );
-  }
-
-  if (error) {
-    return (
-      <FormSection
-        title="Technical Skills"
-        description="List your technical expertise by category"
-        icon={<Code2 className="h-5 w-5" />}
-        colorScheme="skills"
-      >
-        <div className="text-center py-8">
-          <p className="text-red-600 dark:text-red-400">{error}</p>
         </div>
       </FormSection>
     );
