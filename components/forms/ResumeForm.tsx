@@ -13,8 +13,17 @@ import { ExperienceSection } from "./sections/ExperienceSection";
 import { ProjectsSection } from "./sections/ProjectsSection";
 import { EducationSection } from "./sections/EducationSection";
 import { CertificationsSection } from "./sections/CertificationsSection";
+import { LayoutSection } from "./sections/LayoutSection";
 import { ResumePreview } from "@/components/preview/ResumePreview";
-import { Save, FileText, AlignLeft, Loader2, Eye, EyeOff } from "lucide-react";
+import {
+  Save,
+  FileText,
+  AlignLeft,
+  Loader2,
+  Eye,
+  EyeOff,
+  Layout,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 
@@ -31,21 +40,22 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
   const [isSaving, setIsSaving] = useState(false);
   // Hide preview on mobile by default, show on desktop
   const [showPreview, setShowPreview] = useState(false);
-  
+
   // Show preview by default on desktop
   useEffect(() => {
     const checkScreenSize = () => {
       setShowPreview(window.innerWidth >= 1024);
     };
     checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-    return () => window.removeEventListener('resize', checkScreenSize);
+    window.addEventListener("resize", checkScreenSize);
+    return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
   const defaultData: FormData = initialData || {
     title: "",
     versionName: "",
     data: {
+      layout: "modern",
       contact: {
         fullName: "",
         title: "",
@@ -81,11 +91,12 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
   } = useForm<FormData>({
     resolver: zodResolver(createResumeSchema),
     defaultValues: defaultData,
+    mode: "onChange",
   });
 
   const watchedData = watch();
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: FormData): Promise<void> => {
     setIsSaving(true);
     try {
       const url = mode === "create" ? "/api/resume" : `/api/resume/${resumeId}`;
@@ -201,8 +212,20 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
   return (
     <div className="flex flex-col lg:flex-row h-full overflow-hidden">
       {/* Form Section - Left Side */}
-      <div className={`transition-all duration-300 ${showPreview ? 'hidden lg:block lg:w-1/2' : 'w-full'} overflow-y-auto px-3 sm:px-6`}>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 py-6 pb-24">
+      <div
+        className={`transition-all duration-300 ${
+          showPreview ? "hidden lg:block lg:w-1/2" : "w-full"
+        } overflow-y-auto px-3 sm:px-6`}
+      >
+        <form
+          onSubmit={handleSubmit(onSubmit as any)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && e.target instanceof HTMLInputElement) {
+              e.preventDefault();
+            }
+          }}
+          className="space-y-6 py-6 pb-24"
+        >
           {/* Header */}
           <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 p-4 sm:p-6 lg:p-8 rounded-xl lg:rounded-2xl shadow-xl sticky top-0 z-10">
             <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
@@ -210,10 +233,13 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
               <div className="flex-1 min-w-0">
                 <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-1 sm:mb-2 flex items-center gap-2 sm:gap-3">
                   <FileText className="h-5 w-5 sm:h-6 sm:w-6 lg:h-8 lg:w-8 flex-shrink-0" />
-                  <span className="truncate">{mode === "create" ? "Create New Resume" : "Edit Resume"}</span>
+                  <span className="truncate">
+                    {mode === "create" ? "Create New Resume" : "Edit Resume"}
+                  </span>
                 </h2>
                 <p className="text-white/90 text-xs sm:text-sm lg:text-lg hidden sm:block">
-                  Fill in your information to build a professional resume. All fields marked with * are required.
+                  Fill in your information to build a professional resume. All
+                  fields marked with * are required.
                 </p>
               </div>
               <Button
@@ -223,7 +249,11 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
                 size="sm"
                 className="bg-white/20 hover:bg-white/30 text-white border-0 flex-shrink-0"
               >
-                {showPreview ? <EyeOff className="h-4 w-4 sm:h-5 sm:w-5" /> : <Eye className="h-4 w-4 sm:h-5 sm:w-5" />}
+                {showPreview ? (
+                  <EyeOff className="h-4 w-4 sm:h-5 sm:w-5" />
+                ) : (
+                  <Eye className="h-4 w-4 sm:h-5 sm:w-5" />
+                )}
                 <span className="ml-1 sm:ml-2 text-xs sm:text-sm hidden sm:inline">
                   {showPreview ? "Hide" : "Show"}
                 </span>
@@ -231,87 +261,102 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
             </div>
           </div>
 
-      {/* Resume Metadata */}
-      <FormSection
-        title="Resume Information"
-        description="Basic details about this resume version"
-        icon={<FileText className="h-5 w-5" />}
-        colorScheme="default"
-      >
-        <div className="space-y-4">
-          <FormField
-            label="Resume Title"
-            required
-            register={register("title")}
-            placeholder="e.g., Software Engineer Resume - FAANG"
-            error={errors.title?.message}
-            helpText="Give this resume a descriptive name for easy identification"
+          {/* Resume Metadata */}
+          <FormSection
+            title="Resume Information"
+            description="Basic details about this resume version"
+            icon={<FileText className="h-5 w-5" />}
+            colorScheme="default"
+          >
+            <div className="space-y-4">
+              <FormField
+                label="Resume Title"
+                required
+                register={register("title")}
+                placeholder="e.g., Software Engineer Resume - FAANG"
+                error={errors.title?.message}
+                helpText="Give this resume a descriptive name for easy identification"
+              />
+              <FormField
+                label="Version Name"
+                register={register("versionName")}
+                placeholder="e.g., Frontend Focused, Backend Specialist"
+                helpText="Optional: Specify what makes this version unique"
+              />
+            </div>
+          </FormSection>
+
+          {/* Layout Selection */}
+          <FormSection
+            title="Resume Layout"
+            description="Choose the visual style for your resume"
+            icon={<Layout className="h-5 w-5" />}
+            colorScheme="default"
+          >
+            <LayoutSection
+              currentLayout={watchedData.data.layout || "modern"}
+              setValue={setValue}
+            />
+          </FormSection>
+
+          {/* Contact Information */}
+          <ContactSection register={register} errors={errors} />
+
+          {/* Professional Summary */}
+          <FormSection
+            title="Professional Summary"
+            description="A brief overview of your professional background"
+            icon={
+              <AlignLeft className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+            }
+          >
+            <FormField
+              label="Summary"
+              type="textarea"
+              register={register("data.summary")}
+              placeholder="Experienced Full Stack Developer with 5+ years building scalable web applications. Specialized in React, Node.js, and cloud technologies. Passionate about clean code and user experience."
+              rows={5}
+              error={errors.data?.summary?.message}
+              helpText="Write 3-5 sentences highlighting your expertise and value proposition"
+            />
+          </FormSection>
+
+          {/* Skills */}
+          <SkillsSection setValue={setValue} defaultData={defaultData} />
+
+          {/* Work Experience */}
+          <ExperienceSection
+            register={register}
+            setValue={setValue}
+            experiences={watchedData.data.experience}
+            onAdd={addExperience}
+            onRemove={removeExperience}
           />
-          <FormField
-            label="Version Name"
-            register={register("versionName")}
-            placeholder="e.g., Frontend Focused, Backend Specialist"
-            helpText="Optional: Specify what makes this version unique"
+
+          {/* Projects */}
+          <ProjectsSection
+            register={register}
+            setValue={setValue}
+            projects={watchedData.data.projects}
+            onAdd={addProject}
+            onRemove={removeProject}
           />
-        </div>
-      </FormSection>
 
-      {/* Contact Information */}
-      <ContactSection register={register} errors={errors} />
+          {/* Education */}
+          <EducationSection
+            register={register}
+            education={watchedData.data.education}
+            onAdd={addEducation}
+            onRemove={removeEducation}
+          />
 
-      {/* Professional Summary */}
-      <FormSection
-        title="Professional Summary"
-        description="A brief overview of your professional background"
-        icon={<AlignLeft className="h-5 w-5 text-blue-600 dark:text-blue-400" />}
-      >
-        <FormField
-          label="Summary"
-          type="textarea"
-          register={register("data.summary")}
-          placeholder="Experienced Full Stack Developer with 5+ years building scalable web applications. Specialized in React, Node.js, and cloud technologies. Passionate about clean code and user experience."
-          rows={5}
-          error={errors.data?.summary?.message}
-          helpText="Write 3-5 sentences highlighting your expertise and value proposition"
-        />
-      </FormSection>
-
-      {/* Skills */}
-      <SkillsSection setValue={setValue} defaultData={defaultData} />
-
-      {/* Work Experience */}
-      <ExperienceSection
-        register={register}
-        setValue={setValue}
-        experiences={watchedData.data.experience}
-        onAdd={addExperience}
-        onRemove={removeExperience}
-      />
-
-      {/* Projects */}
-      <ProjectsSection
-        register={register}
-        setValue={setValue}
-        projects={watchedData.data.projects}
-        onAdd={addProject}
-        onRemove={removeProject}
-      />
-
-      {/* Education */}
-      <EducationSection
-        register={register}
-        education={watchedData.data.education}
-        onAdd={addEducation}
-        onRemove={removeEducation}
-      />
-
-      {/* Certifications */}
-      <CertificationsSection
-        register={register}
-        certifications={watchedData.data.certifications}
-        onAdd={addCertification}
-        onRemove={removeCertification}
-      />
+          {/* Certifications */}
+          <CertificationsSection
+            register={register}
+            certifications={watchedData.data.certifications}
+            onAdd={addCertification}
+            onRemove={removeCertification}
+          />
 
           {/* Submit Actions */}
           <div className="sticky bottom-0 bg-white dark:bg-gray-900 border-t-2 border-gray-200 dark:border-gray-700 p-6 -mx-4 mt-8">
@@ -324,7 +369,12 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSaving} size="lg" className="min-w-[200px]">
+              <Button
+                type="submit"
+                disabled={isSaving}
+                size="lg"
+                className="min-w-[200px]"
+              >
                 {isSaving ? (
                   <>
                     <Loader2 className="h-5 w-5 mr-2 animate-spin" />
