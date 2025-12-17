@@ -1,14 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FormSection } from "./FormSection";
-import { Code2, Eye } from "lucide-react";
+import { Code2, Eye, Loader2 } from "lucide-react";
 import { UseFormSetValue } from "react-hook-form";
 import { AutocompleteInput } from "@/components/ui/autocomplete-input";
-import { skillSuggestions } from "@/lib/skillSuggestions";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogBody } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogBody,
+} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+
+interface SkillCategory {
+  id: string;
+  name: string;
+  key: string;
+  description: string | null;
+  skills: string[];
+  count: number;
+}
 
 interface SkillsSectionProps {
   setValue: UseFormSetValue<any>;
@@ -17,6 +32,30 @@ interface SkillsSectionProps {
 
 export function SkillsSection({ setValue, defaultData }: SkillsSectionProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [categories, setCategories] = useState<SkillCategory[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchSkills = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch("/api/skills");
+        if (!response.ok) {
+          throw new Error("Failed to fetch skills");
+        }
+        const data = await response.json();
+        setCategories(data.categories || []);
+      } catch (err) {
+        console.error("Error fetching skills:", err);
+        setError("Failed to load skills. Please refresh the page.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSkills();
+  }, []);
 
   const handleSkillChange = (category: string, value: string) => {
     const values = value
@@ -26,16 +65,44 @@ export function SkillsSection({ setValue, defaultData }: SkillsSectionProps) {
     setValue(`data.skills.${category}`, values);
   };
 
-  const allSkillSuggestions = {
-    "Programming Languages": skillSuggestions.languages || [],
-    "Frameworks & Libraries": skillSuggestions.frameworks || [],
-    "Databases & ORMs": skillSuggestions.databases || [],
-    "Tools & Technologies": skillSuggestions.tools || [],
-    "Cloud Platforms": skillSuggestions.cloud || [],
-    "Methodologies & Practices": skillSuggestions.methodologies || [],
+  const getCategoryByKey = (key: string) => {
+    return categories.find((cat) => cat.key === key);
   };
 
-  const totalSuggestions = Object.values(allSkillSuggestions).reduce((acc, skills) => acc + skills.length, 0);
+  const totalSuggestions = categories.reduce((acc, cat) => acc + cat.count, 0);
+
+  if (loading) {
+    return (
+      <FormSection
+        title="Technical Skills"
+        description="List your technical expertise by category"
+        icon={<Code2 className="h-5 w-5" />}
+        colorScheme="skills"
+      >
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+          <span className="ml-3 text-gray-600 dark:text-gray-400">
+            Loading skills...
+          </span>
+        </div>
+      </FormSection>
+    );
+  }
+
+  if (error) {
+    return (
+      <FormSection
+        title="Technical Skills"
+        description="List your technical expertise by category"
+        icon={<Code2 className="h-5 w-5" />}
+        colorScheme="skills"
+      >
+        <div className="text-center py-8">
+          <p className="text-red-600 dark:text-red-400">{error}</p>
+        </div>
+      </FormSection>
+    );
+  }
 
   return (
     <>
@@ -57,56 +124,82 @@ export function SkillsSection({ setValue, defaultData }: SkillsSectionProps) {
           </Button>
         }
       >
-      <div className="space-y-4">
-        <AutocompleteInput
-          label="Programming Languages"
-          placeholder="Start typing to see suggestions..."
-          suggestions={skillSuggestions.languages}
-          defaultValue={defaultData.data.skills.languages.join(", ")}
-          onChange={(value) => handleSkillChange("languages", value)}
-          helpText="Type to search from 40+ popular languages, or add your own"
-        />
-        <AutocompleteInput
-          label="Frameworks & Libraries"
-          placeholder="Start typing to see suggestions..."
-          suggestions={skillSuggestions.frameworks}
-          defaultValue={defaultData.data.skills.frameworks.join(", ")}
-          onChange={(value) => handleSkillChange("frameworks", value)}
-          helpText="Type to search from 80+ popular frameworks, or add your own"
-        />
-        <AutocompleteInput
-          label="Databases & ORMs"
-          placeholder="Start typing to see suggestions..."
-          suggestions={skillSuggestions.databases}
-          defaultValue={defaultData.data.skills.databases.join(", ")}
-          onChange={(value) => handleSkillChange("databases", value)}
-          helpText="Type to search from 50+ databases and ORMs, or add your own"
-        />
-        <AutocompleteInput
-          label="Tools & Technologies"
-          placeholder="Start typing to see suggestions..."
-          suggestions={skillSuggestions.tools}
-          defaultValue={defaultData.data.skills.tools.join(", ")}
-          onChange={(value) => handleSkillChange("tools", value)}
-          helpText="Type to search from 100+ tools, or add your own"
-        />
-        <AutocompleteInput
-          label="Cloud Platforms"
-          placeholder="Start typing to see suggestions..."
-          suggestions={skillSuggestions.cloud}
-          defaultValue={defaultData.data.skills.cloud.join(", ")}
-          onChange={(value) => handleSkillChange("cloud", value)}
-          helpText="Type to search from 40+ cloud services, or add your own"
-        />
-        <AutocompleteInput
-          label="Methodologies & Practices"
-          placeholder="Start typing to see suggestions..."
-          suggestions={skillSuggestions.methodologies}
-          defaultValue={defaultData.data.skills.methodologies?.join(", ") || ""}
-          onChange={(value) => handleSkillChange("methodologies", value)}
-          helpText="Type to search from 50+ methodologies, or add your own"
-        />
-      </div>
+        <div className="space-y-4">
+          {getCategoryByKey("languages") && (
+            <AutocompleteInput
+              label={getCategoryByKey("languages")!.name}
+              placeholder="Start typing to see suggestions..."
+              suggestions={getCategoryByKey("languages")!.skills}
+              defaultValue={defaultData.data.skills.languages.join(", ")}
+              onChange={(value) => handleSkillChange("languages", value)}
+              helpText={`Type to search from ${
+                getCategoryByKey("languages")!.count
+              }+ skills, or add your own`}
+            />
+          )}
+          {getCategoryByKey("frameworks") && (
+            <AutocompleteInput
+              label={getCategoryByKey("frameworks")!.name}
+              placeholder="Start typing to see suggestions..."
+              suggestions={getCategoryByKey("frameworks")!.skills}
+              defaultValue={defaultData.data.skills.frameworks.join(", ")}
+              onChange={(value) => handleSkillChange("frameworks", value)}
+              helpText={`Type to search from ${
+                getCategoryByKey("frameworks")!.count
+              }+ skills, or add your own`}
+            />
+          )}
+          {getCategoryByKey("databases") && (
+            <AutocompleteInput
+              label={getCategoryByKey("databases")!.name}
+              placeholder="Start typing to see suggestions..."
+              suggestions={getCategoryByKey("databases")!.skills}
+              defaultValue={defaultData.data.skills.databases.join(", ")}
+              onChange={(value) => handleSkillChange("databases", value)}
+              helpText={`Type to search from ${
+                getCategoryByKey("databases")!.count
+              }+ skills, or add your own`}
+            />
+          )}
+          {getCategoryByKey("tools") && (
+            <AutocompleteInput
+              label={getCategoryByKey("tools")!.name}
+              placeholder="Start typing to see suggestions..."
+              suggestions={getCategoryByKey("tools")!.skills}
+              defaultValue={defaultData.data.skills.tools.join(", ")}
+              onChange={(value) => handleSkillChange("tools", value)}
+              helpText={`Type to search from ${
+                getCategoryByKey("tools")!.count
+              }+ skills, or add your own`}
+            />
+          )}
+          {getCategoryByKey("cloud") && (
+            <AutocompleteInput
+              label={getCategoryByKey("cloud")!.name}
+              placeholder="Start typing to see suggestions..."
+              suggestions={getCategoryByKey("cloud")!.skills}
+              defaultValue={defaultData.data.skills.cloud.join(", ")}
+              onChange={(value) => handleSkillChange("cloud", value)}
+              helpText={`Type to search from ${
+                getCategoryByKey("cloud")!.count
+              }+ skills, or add your own`}
+            />
+          )}
+          {getCategoryByKey("methodologies") && (
+            <AutocompleteInput
+              label={getCategoryByKey("methodologies")!.name}
+              placeholder="Start typing to see suggestions..."
+              suggestions={getCategoryByKey("methodologies")!.skills}
+              defaultValue={
+                defaultData.data.skills.methodologies?.join(", ") || ""
+              }
+              onChange={(value) => handleSkillChange("methodologies", value)}
+              helpText={`Type to search from ${
+                getCategoryByKey("methodologies")!.count
+              }+ skills, or add your own`}
+            />
+          )}
+        </div>
       </FormSection>
 
       {/* Skills Overview Dialog */}
@@ -123,14 +216,14 @@ export function SkillsSection({ setValue, defaultData }: SkillsSectionProps) {
           </DialogHeader>
           <DialogBody>
             <div className="space-y-6">
-              {Object.entries(allSkillSuggestions).map(([category, skills]) => (
-                <div key={category}>
+              {categories.map((category) => (
+                <div key={category.id}>
                   <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                    {category} ({(skills as string[]).length})
+                    {category.name} ({category.count})
                   </h3>
-                  {(skills as string[]).length > 0 ? (
+                  {category.skills.length > 0 ? (
                     <div className="flex flex-wrap gap-2">
-                      {(skills as string[]).map((skill: string, index: number) => (
+                      {category.skills.map((skill: string, index: number) => (
                         <Badge
                           key={index}
                           variant="secondary"
