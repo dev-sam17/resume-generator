@@ -163,6 +163,28 @@ export const skillSuggestions = {
     "Qdrant",
     "Milvus",
     "Chroma",
+    
+    // ORMs & Query Builders
+    "Prisma",
+    "TypeORM",
+    "Sequelize",
+    "Drizzle ORM",
+    "Mongoose",
+    "SQLAlchemy",
+    "Django ORM",
+    "Hibernate",
+    "Entity Framework",
+    "Entity Framework Core",
+    "Dapper",
+    "Knex.js",
+    "Kysely",
+    "ActiveRecord",
+    "Eloquent",
+    "Doctrine",
+    "GORM",
+    "Ent",
+    "Diesel",
+    "SeaORM",
   ],
 
   tools: [
