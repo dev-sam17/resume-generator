@@ -96,6 +96,13 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
 
   const watchedData = watch();
 
+  // Force re-render on form changes for live preview
+  const [, forceUpdate] = useState({});
+  useEffect(() => {
+    const subscription = watch(() => forceUpdate({}));
+    return () => subscription.unsubscribe();
+  }, [watch]);
+
   const onSubmit = async (data: FormData): Promise<void> => {
     setIsSaving(true);
     try {
