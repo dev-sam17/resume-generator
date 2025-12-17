@@ -1,8 +1,10 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { FormSection } from "./FormSection";
 import { FormField } from "./FormField";
 import { DynamicListItem } from "./DynamicListItem";
+import { SkillInput } from "@/components/ui/skill-input";
 import { FolderGit2 } from "lucide-react";
 import { UseFormRegister, UseFormSetValue } from "react-hook-form";
 
@@ -21,6 +23,24 @@ export function ProjectsSection({
   onAdd,
   onRemove,
 }: ProjectsSectionProps) {
+  const [allSkills, setAllSkills] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchSkills = async () => {
+      try {
+        const response = await fetch("/api/skills");
+        if (response.ok) {
+          const data = await response.json();
+          const skills = data.categories.flatMap((cat: any) => cat.skills);
+          setAllSkills(skills);
+        }
+      } catch (error) {
+        console.warn("Failed to fetch skills:", error);
+      }
+    };
+    fetchSkills();
+  }, []);
+
   return (
     <FormSection
       title="Projects"
@@ -35,7 +55,9 @@ export function ProjectsSection({
           <div className="text-center py-8 text-gray-500 dark:text-gray-400">
             <FolderGit2 className="h-12 w-12 mx-auto mb-3 opacity-50" />
             <p>No projects added yet.</p>
-            <p className="text-sm">Click "Add Project" to showcase your work.</p>
+            <p className="text-sm">
+              Click "Add Project" to showcase your work.
+            </p>
           </div>
         ) : (
           projects.map((_, index) => (
@@ -77,18 +99,15 @@ export function ProjectsSection({
                     helpText="GitHub, live demo, or portfolio link"
                   />
                 </div>
-                <FormField
+                <SkillInput
                   label="Technologies Used"
-                  register={register(`data.projects.${index}.technologies`)}
-                  placeholder="Next.js, PostgreSQL, Stripe, Tailwind CSS"
-                  onChange={(e) => {
-                    const values = e.target.value
-                      .split(",")
-                      .map((v) => v.trim())
-                      .filter(Boolean);
-                    setValue(`data.projects.${index}.technologies`, values);
-                  }}
-                  helpText="Comma-separated list of technologies"
+                  placeholder="Type and press Enter to add..."
+                  suggestions={allSkills}
+                  defaultValue={projects[index]?.technologies || []}
+                  onChange={(values) =>
+                    setValue(`data.projects.${index}.technologies`, values)
+                  }
+                  helpText="Select from suggestions or add custom technologies"
                 />
               </div>
             </DynamicListItem>
