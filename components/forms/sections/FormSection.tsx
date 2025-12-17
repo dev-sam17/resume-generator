@@ -13,6 +13,7 @@ interface FormSectionProps {
   addButtonText?: string;
   icon?: ReactNode;
   colorScheme?: "contact" | "skills" | "experience" | "projects" | "education" | "certifications" | "default";
+  headerActions?: ReactNode;
 }
 
 const colorSchemes = {
@@ -68,6 +69,7 @@ export function FormSection({
   addButtonText = "Add",
   icon,
   colorScheme = "default",
+  headerActions,
 }: FormSectionProps) {
   const colors = colorSchemes[colorScheme];
 
@@ -90,17 +92,20 @@ export function FormSection({
               )}
             </div>
           </div>
-          {onAdd && (
-            <Button 
-              type="button" 
-              onClick={onAdd} 
-              size="sm" 
-              className={`${colors.iconBg} ${colors.iconColor} border-0 hover:scale-105 transition-transform`}
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              {addButtonText}
-            </Button>
-          )}
+          <div className="flex items-center gap-2">
+            {headerActions}
+            {onAdd && (
+              <Button 
+                type="button" 
+                onClick={onAdd} 
+                size="sm" 
+                className={`${colors.iconBg} ${colors.iconColor} border-0 hover:scale-105 transition-transform`}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                {addButtonText}
+              </Button>
+            )}
+          </div>
         </div>
       </CardHeader>
       <CardContent>{children}</CardContent>
