@@ -36,6 +36,9 @@ export function SkillsSection({ setValue, defaultData }: SkillsSectionProps) {
   const [categories, setCategories] = useState<SkillCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(
+    new Set()
+  );
 
   useEffect(() => {
     const fetchSkills = async () => {
@@ -47,6 +50,16 @@ export function SkillsSection({ setValue, defaultData }: SkillsSectionProps) {
         }
         const data = await response.json();
         setCategories(data.categories || []);
+        // Initialize selected categories with default visible ones
+        const defaultCategories = new Set([
+          "languages",
+          "frameworks",
+          "databases",
+          "tools",
+          "cloud",
+          "methodologies",
+        ]);
+        setSelectedCategories(defaultCategories);
       } catch (err) {
         console.warn("Database not available, using fallback skills:", err);
         // Fallback to hardcoded skills if database is not ready
@@ -102,6 +115,16 @@ export function SkillsSection({ setValue, defaultData }: SkillsSectionProps) {
         ];
         setCategories(fallbackCategories);
         setError(null);
+        // Initialize selected categories with default visible ones
+        const defaultCategories = new Set([
+          "languages",
+          "frameworks",
+          "databases",
+          "tools",
+          "cloud",
+          "methodologies",
+        ]);
+        setSelectedCategories(defaultCategories);
       } finally {
         setLoading(false);
       }
@@ -109,6 +132,18 @@ export function SkillsSection({ setValue, defaultData }: SkillsSectionProps) {
 
     fetchSkills();
   }, []);
+
+  const toggleCategory = (categoryKey: string) => {
+    setSelectedCategories((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(categoryKey)) {
+        newSet.delete(categoryKey);
+      } else {
+        newSet.add(categoryKey);
+      }
+      return newSet;
+    });
+  };
 
   const handleSkillChange = (category: string, values: string[]) => {
     setValue(`data.skills.${category}`, values);
@@ -158,85 +193,50 @@ export function SkillsSection({ setValue, defaultData }: SkillsSectionProps) {
           </Button>
         }
       >
+        {/* Category Selection Checkboxes */}
+        <div className="mb-6 p-4 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg border-2 border-purple-200 dark:border-purple-800">
+          <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+            <Code2 className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+            Select Categories to Include
+          </h4>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {categories.map((category) => (
+              <label
+                key={category.key}
+                className="flex items-center gap-2 p-2 rounded-md hover:bg-white/50 dark:hover:bg-gray-800/50 cursor-pointer transition-colors"
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedCategories.has(category.key)}
+                  onChange={() => toggleCategory(category.key)}
+                  className="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                />
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {category.name}
+                  <span className="ml-1 text-xs text-gray-500 dark:text-gray-400">
+                    ({category.count})
+                  </span>
+                </span>
+              </label>
+            ))}
+          </div>
+        </div>
+
         <div className="space-y-4">
-          {getCategoryByKey("languages") && (
-            <SkillInput
-              label={getCategoryByKey("languages")!.name}
-              placeholder="Type and press Enter to add..."
-              suggestions={getCategoryByKey("languages")!.skills}
-              defaultValue={defaultData.data.skills.languages || []}
-              onChange={(values) => handleSkillChange("languages", values)}
-              categoryKey="languages"
-              helpText={`${
-                getCategoryByKey("languages")!.count
-              }+ suggestions available. Press Enter to add.`}
-            />
-          )}
-          {getCategoryByKey("frameworks") && (
-            <SkillInput
-              label={getCategoryByKey("frameworks")!.name}
-              placeholder="Type and press Enter to add..."
-              suggestions={getCategoryByKey("frameworks")!.skills}
-              defaultValue={defaultData.data.skills.frameworks || []}
-              onChange={(values) => handleSkillChange("frameworks", values)}
-              categoryKey="frameworks"
-              helpText={`${
-                getCategoryByKey("frameworks")!.count
-              }+ suggestions available. Press Enter to add.`}
-            />
-          )}
-          {getCategoryByKey("databases") && (
-            <SkillInput
-              label={getCategoryByKey("databases")!.name}
-              placeholder="Type and press Enter to add..."
-              suggestions={getCategoryByKey("databases")!.skills}
-              defaultValue={defaultData.data.skills.databases || []}
-              onChange={(values) => handleSkillChange("databases", values)}
-              categoryKey="databases"
-              helpText={`${
-                getCategoryByKey("databases")!.count
-              }+ suggestions available. Press Enter to add.`}
-            />
-          )}
-          {getCategoryByKey("tools") && (
-            <SkillInput
-              label={getCategoryByKey("tools")!.name}
-              placeholder="Type and press Enter to add..."
-              suggestions={getCategoryByKey("tools")!.skills}
-              defaultValue={defaultData.data.skills.tools || []}
-              onChange={(values) => handleSkillChange("tools", values)}
-              categoryKey="tools"
-              helpText={`${
-                getCategoryByKey("tools")!.count
-              }+ suggestions available. Press Enter to add.`}
-            />
-          )}
-          {getCategoryByKey("cloud") && (
-            <SkillInput
-              label={getCategoryByKey("cloud")!.name}
-              placeholder="Type and press Enter to add..."
-              suggestions={getCategoryByKey("cloud")!.skills}
-              defaultValue={defaultData.data.skills.cloud || []}
-              onChange={(values) => handleSkillChange("cloud", values)}
-              categoryKey="cloud"
-              helpText={`${
-                getCategoryByKey("cloud")!.count
-              }+ suggestions available. Press Enter to add.`}
-            />
-          )}
-          {getCategoryByKey("methodologies") && (
-            <SkillInput
-              label={getCategoryByKey("methodologies")!.name}
-              placeholder="Type and press Enter to add..."
-              suggestions={getCategoryByKey("methodologies")!.skills}
-              defaultValue={defaultData.data.skills.methodologies || []}
-              onChange={(values) => handleSkillChange("methodologies", values)}
-              categoryKey="methodologies"
-              helpText={`${
-                getCategoryByKey("methodologies")!.count
-              }+ suggestions available. Press Enter to add.`}
-            />
-          )}
+          {categories
+            .filter((category) => selectedCategories.has(category.key))
+            .map((category) => (
+              <SkillInput
+                key={category.key}
+                label={category.name}
+                placeholder="Type and press Enter to add..."
+                suggestions={category.skills}
+                defaultValue={defaultData.data.skills[category.key] || []}
+                onChange={(values) => handleSkillChange(category.key, values)}
+                categoryKey={category.key}
+                helpText={`${category.count}+ suggestions available. Press Enter to add.`}
+              />
+            ))}
         </div>
       </FormSection>
 
