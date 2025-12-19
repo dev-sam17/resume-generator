@@ -3,9 +3,17 @@
 import { useState, useRef, useEffect } from "react";
 import { Input } from "./input";
 import { Label } from "./label";
-import { Check, X, Plus, Database } from "lucide-react";
+import { Check, X, Plus, Database, FolderOpen } from "lucide-react";
 import { Badge } from "./badge";
 import { Button } from "./button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogBody,
+} from "./dialog";
 
 interface SkillInputProps {
   label: string;
@@ -35,7 +43,13 @@ export function SkillInput({
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(0);
   const [isAddingToDb, setIsAddingToDb] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [showCategoryDialog, setShowCategoryDialog] = useState(false);
   const [pendingSkill, setPendingSkill] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [categories, setCategories] = useState<
+    Array<{ key: string; name: string }>
+  >([]);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -104,8 +118,27 @@ export function SkillInput({
     }
   };
 
-  const handleAddToDatabase = async (skillName: string) => {
-    if (!skillName.trim() || !categoryKey) return;
+  const fetchCategories = async () => {
+    setIsLoadingCategories(true);
+    try {
+      const response = await fetch("/api/skills");
+      if (response.ok) {
+        const data = await response.json();
+        const cats = data.categories.map((cat: any) => ({
+          key: cat.key,
+          name: cat.name,
+        }));
+        setCategories(cats);
+      }
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    } finally {
+      setIsLoadingCategories(false);
+    }
+  };
+
+  const handleAddToDatabase = async (skillName: string, category: string) => {
+    if (!skillName.trim() || !category) return;
 
     setIsAddingToDb(true);
     try {
@@ -114,14 +147,16 @@ export function SkillInput({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: skillName.trim(),
-          categoryKey: categoryKey,
+          categoryKey: category,
         }),
       });
 
       if (response.ok) {
         addSkill(skillName.trim());
         setShowConfirmDialog(false);
+        setShowCategoryDialog(false);
         setPendingSkill("");
+        setSelectedCategory("");
       } else {
         const error = await response.json();
         console.error("Failed to add skill:", error.error);
@@ -133,19 +168,36 @@ export function SkillInput({
     }
   };
 
-  const promptAddToDatabase = () => {
+  const promptAddToDatabase = async () => {
     setPendingSkill(inputValue.trim());
-    setShowConfirmDialog(true);
+
+    // If categoryKey is provided, show confirmation dialog
+    // Otherwise, show category selection dialog
+    if (categoryKey) {
+      setSelectedCategory(categoryKey);
+      setShowConfirmDialog(true);
+    } else {
+      await fetchCategories();
+      setShowCategoryDialog(true);
+    }
   };
 
   const confirmAddToDatabase = () => {
-    handleAddToDatabase(pendingSkill);
+    handleAddToDatabase(pendingSkill, selectedCategory);
   };
 
   const cancelAddToDatabase = () => {
     setShowConfirmDialog(false);
+    setShowCategoryDialog(false);
     setPendingSkill("");
+    setSelectedCategory("");
     inputRef.current?.focus();
+  };
+
+  const handleCategorySelected = (category: string) => {
+    setSelectedCategory(category);
+    setShowCategoryDialog(false);
+    setShowConfirmDialog(true);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -308,6 +360,59 @@ export function SkillInput({
       {helpText && (
         <p className="text-xs text-gray-500 dark:text-gray-400">{helpText}</p>
       )}
+
+      {/* Category Selection Dialog */}
+      <Dialog open={showCategoryDialog} onOpenChange={setShowCategoryDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FolderOpen className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+              Select Category for "{pendingSkill}"
+            </DialogTitle>
+            <DialogDescription>
+              Choose which category this skill belongs to
+            </DialogDescription>
+          </DialogHeader>
+          <DialogBody>
+            {isLoadingCategories ? (
+              <div className="flex items-center justify-center py-8">
+                <Database className="h-8 w-8 animate-pulse text-purple-600 dark:text-purple-400" />
+                <span className="ml-3 text-gray-600 dark:text-gray-400">
+                  Loading categories...
+                </span>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {categories.map((category) => (
+                  <button
+                    key={category.key}
+                    type="button"
+                    onClick={() => handleCategorySelected(category.key)}
+                    className="w-full text-left px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all"
+                  >
+                    <div className="font-medium text-gray-900 dark:text-white">
+                      {category.name}
+                    </div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                      {category.key}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+            <div className="mt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={cancelAddToDatabase}
+                className="w-full"
+              >
+                Cancel
+              </Button>
+            </div>
+          </DialogBody>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
