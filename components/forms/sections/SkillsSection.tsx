@@ -147,7 +147,11 @@ export function SkillsSection({ setValue, defaultData }: SkillsSectionProps) {
   };
 
   const handleSkillChange = (category: string, values: string[]) => {
-    setValue(`data.skills.${category}`, values);
+    setValue(`data.skills.${category}`, values, {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    });
   };
 
   const getCategoryByKey = (key: string) => {

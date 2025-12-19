@@ -56,7 +56,11 @@ const layouts = [
 
 export function LayoutSection({ currentLayout, setValue }: LayoutSectionProps) {
   const handleLayoutChange = (layoutId: LayoutType) => {
-    setValue("data.layout", layoutId, { shouldDirty: true });
+    setValue("data.layout", layoutId, {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    });
   };
 
   return (

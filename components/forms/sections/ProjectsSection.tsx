@@ -105,7 +105,11 @@ export function ProjectsSection({
                   suggestions={allSkills}
                   defaultValue={projects[index]?.technologies || []}
                   onChange={(values) =>
-                    setValue(`data.projects.${index}.technologies`, values)
+                    setValue(`data.projects.${index}.technologies`, values, {
+                      shouldDirty: true,
+                      shouldTouch: true,
+                      shouldValidate: true,
+                    })
                   }
                   helpText="Select from suggestions or add custom technologies"
                 />

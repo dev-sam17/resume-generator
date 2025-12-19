@@ -104,7 +104,15 @@ export function ExperienceSection({
                     suggestions={allSkills}
                     defaultValue={experiences[index]?.technologies || []}
                     onChange={(values) =>
-                      setValue(`data.experience.${index}.technologies`, values)
+                      setValue(
+                        `data.experience.${index}.technologies`,
+                        values,
+                        {
+                          shouldDirty: true,
+                          shouldTouch: true,
+                          shouldValidate: true,
+                        }
+                      )
                     }
                     helpText="Select from suggestions or add custom technologies"
                   />
@@ -124,7 +132,12 @@ export function ExperienceSection({
                     .filter(Boolean);
                   setValue(
                     `data.experience.${index}.achievements`,
-                    achievements
+                    achievements,
+                    {
+                      shouldDirty: true,
+                      shouldTouch: true,
+                      shouldValidate: true,
+                    }
                   );
                 }}
                 helpText="One achievement per line, start with bullet points"
