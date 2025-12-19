@@ -8,7 +8,7 @@ import { ArrowLeft, Download, Share2, Edit } from "lucide-react";
 import Link from "next/link";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-import { convert } from "colorizr";
+import { convertLabColorsToRgb } from "@/lib/color-conversion";
 import type { ResumeData } from "@/types/resume";
 
 interface Resume {
@@ -54,59 +54,109 @@ export default function ViewResumePage() {
       const element = document.getElementById("resume-preview");
       if (!element) return;
 
+      // Store original styles to restore later
+      const allElements = element.querySelectorAll("*");
+      const originalStyles = new Map<
+        Element,
+        {
+          color: string;
+          backgroundColor: string;
+          borderColor: string;
+          borderTopColor: string;
+          borderRightColor: string;
+          borderBottomColor: string;
+          borderLeftColor: string;
+          outlineColor: string;
+          backgroundImage: string;
+        }
+      >();
+
+      // Convert lab/oklch colors to RGB BEFORE html2canvas runs
+      allElements.forEach((el: any) => {
+        const computed = window.getComputedStyle(el);
+
+        // Store original inline styles
+        originalStyles.set(el, {
+          color: el.style.color,
+          backgroundColor: el.style.backgroundColor,
+          borderColor: el.style.borderColor,
+          borderTopColor: el.style.borderTopColor,
+          borderRightColor: el.style.borderRightColor,
+          borderBottomColor: el.style.borderBottomColor,
+          borderLeftColor: el.style.borderLeftColor,
+          outlineColor: el.style.outlineColor,
+          backgroundImage: el.style.backgroundImage,
+        });
+
+        // Override with RGB values
+        if (computed.color) {
+          el.style.color = convertLabColorsToRgb(computed.color);
+        }
+        if (computed.backgroundColor) {
+          el.style.backgroundColor = convertLabColorsToRgb(
+            computed.backgroundColor
+          );
+        }
+        if (computed.borderColor) {
+          el.style.borderColor = convertLabColorsToRgb(computed.borderColor);
+        }
+        if (computed.borderTopColor) {
+          el.style.borderTopColor = convertLabColorsToRgb(
+            computed.borderTopColor
+          );
+        }
+        if (computed.borderRightColor) {
+          el.style.borderRightColor = convertLabColorsToRgb(
+            computed.borderRightColor
+          );
+        }
+        if (computed.borderBottomColor) {
+          el.style.borderBottomColor = convertLabColorsToRgb(
+            computed.borderBottomColor
+          );
+        }
+        if (computed.borderLeftColor) {
+          el.style.borderLeftColor = convertLabColorsToRgb(
+            computed.borderLeftColor
+          );
+        }
+        if (computed.outlineColor) {
+          el.style.outlineColor = convertLabColorsToRgb(computed.outlineColor);
+        }
+
+        // Remove gradient backgrounds with lab/oklch
+        if (
+          computed.backgroundImage &&
+          computed.backgroundImage !== "none" &&
+          (computed.backgroundImage.includes("lab(") ||
+            computed.backgroundImage.includes("oklch("))
+        ) {
+          el.style.backgroundImage = "none";
+        }
+      });
+
+      // Now run html2canvas with RGB colors already applied
       const canvas = await html2canvas(element, {
         scale: 2,
         useCORS: true,
         logging: false,
         backgroundColor: "#ffffff",
-        onclone: (clonedDoc) => {
-          // Convert all color values to RGB format using colorizr
-          const allElements = clonedDoc.querySelectorAll("*");
-          const clonedWindow = clonedDoc.defaultView || window;
+      });
 
-          allElements.forEach((el: any) => {
-            const computed = clonedWindow.getComputedStyle(el);
-
-            // Helper to convert any color to RGB using colorizr
-            const toRGB = (color: string) => {
-              if (!color || color === "transparent" || color === "none")
-                return color;
-
-              try {
-                // Use colorizr to convert any color format to RGB
-                return convert(color, "rgb");
-              } catch {
-                // Fallback to original color if conversion fails
-                return color;
-              }
-            };
-
-            // Override all color properties with RGB values
-            if (computed.color) el.style.color = toRGB(computed.color);
-            if (computed.backgroundColor)
-              el.style.backgroundColor = toRGB(computed.backgroundColor);
-            if (computed.borderColor)
-              el.style.borderColor = toRGB(computed.borderColor);
-            if (computed.borderTopColor)
-              el.style.borderTopColor = toRGB(computed.borderTopColor);
-            if (computed.borderRightColor)
-              el.style.borderRightColor = toRGB(computed.borderRightColor);
-            if (computed.borderBottomColor)
-              el.style.borderBottomColor = toRGB(computed.borderBottomColor);
-            if (computed.borderLeftColor)
-              el.style.borderLeftColor = toRGB(computed.borderLeftColor);
-            if (computed.outlineColor)
-              el.style.outlineColor = toRGB(computed.outlineColor);
-
-            // Remove any gradient backgrounds that might use lab/oklch
-            if (
-              computed.backgroundImage &&
-              computed.backgroundImage !== "none"
-            ) {
-              el.style.backgroundImage = "none";
-            }
-          });
-        },
+      // Restore original styles
+      allElements.forEach((el: any) => {
+        const original = originalStyles.get(el);
+        if (original) {
+          el.style.color = original.color;
+          el.style.backgroundColor = original.backgroundColor;
+          el.style.borderColor = original.borderColor;
+          el.style.borderTopColor = original.borderTopColor;
+          el.style.borderRightColor = original.borderRightColor;
+          el.style.borderBottomColor = original.borderBottomColor;
+          el.style.borderLeftColor = original.borderLeftColor;
+          el.style.outlineColor = original.outlineColor;
+          el.style.backgroundImage = original.backgroundImage;
+        }
       });
 
       const imgData = canvas.toDataURL("image/png");
@@ -150,59 +200,109 @@ export default function ViewResumePage() {
       const element = document.getElementById("resume-preview");
       if (!element) return;
 
+      // Store original styles to restore later
+      const allElements = element.querySelectorAll("*");
+      const originalStyles = new Map<
+        Element,
+        {
+          color: string;
+          backgroundColor: string;
+          borderColor: string;
+          borderTopColor: string;
+          borderRightColor: string;
+          borderBottomColor: string;
+          borderLeftColor: string;
+          outlineColor: string;
+          backgroundImage: string;
+        }
+      >();
+
+      // Convert lab/oklch colors to RGB BEFORE html2canvas runs
+      allElements.forEach((el: any) => {
+        const computed = window.getComputedStyle(el);
+
+        // Store original inline styles
+        originalStyles.set(el, {
+          color: el.style.color,
+          backgroundColor: el.style.backgroundColor,
+          borderColor: el.style.borderColor,
+          borderTopColor: el.style.borderTopColor,
+          borderRightColor: el.style.borderRightColor,
+          borderBottomColor: el.style.borderBottomColor,
+          borderLeftColor: el.style.borderLeftColor,
+          outlineColor: el.style.outlineColor,
+          backgroundImage: el.style.backgroundImage,
+        });
+
+        // Override with RGB values
+        if (computed.color) {
+          el.style.color = convertLabColorsToRgb(computed.color);
+        }
+        if (computed.backgroundColor) {
+          el.style.backgroundColor = convertLabColorsToRgb(
+            computed.backgroundColor
+          );
+        }
+        if (computed.borderColor) {
+          el.style.borderColor = convertLabColorsToRgb(computed.borderColor);
+        }
+        if (computed.borderTopColor) {
+          el.style.borderTopColor = convertLabColorsToRgb(
+            computed.borderTopColor
+          );
+        }
+        if (computed.borderRightColor) {
+          el.style.borderRightColor = convertLabColorsToRgb(
+            computed.borderRightColor
+          );
+        }
+        if (computed.borderBottomColor) {
+          el.style.borderBottomColor = convertLabColorsToRgb(
+            computed.borderBottomColor
+          );
+        }
+        if (computed.borderLeftColor) {
+          el.style.borderLeftColor = convertLabColorsToRgb(
+            computed.borderLeftColor
+          );
+        }
+        if (computed.outlineColor) {
+          el.style.outlineColor = convertLabColorsToRgb(computed.outlineColor);
+        }
+
+        // Remove gradient backgrounds with lab/oklch
+        if (
+          computed.backgroundImage &&
+          computed.backgroundImage !== "none" &&
+          (computed.backgroundImage.includes("lab(") ||
+            computed.backgroundImage.includes("oklch("))
+        ) {
+          el.style.backgroundImage = "none";
+        }
+      });
+
+      // Now run html2canvas with RGB colors already applied
       const canvas = await html2canvas(element, {
         scale: 2,
         useCORS: true,
         logging: false,
         backgroundColor: "#ffffff",
-        onclone: (clonedDoc) => {
-          // Convert all color values to RGB format using colorizr
-          const allElements = clonedDoc.querySelectorAll("*");
-          const clonedWindow = clonedDoc.defaultView || window;
+      });
 
-          allElements.forEach((el: any) => {
-            const computed = clonedWindow.getComputedStyle(el);
-
-            // Helper to convert any color to RGB using colorizr
-            const toRGB = (color: string) => {
-              if (!color || color === "transparent" || color === "none")
-                return color;
-
-              try {
-                // Use colorizr to convert any color format to RGB
-                return convert(color, "rgb");
-              } catch {
-                // Fallback to original color if conversion fails
-                return color;
-              }
-            };
-
-            // Override all color properties with RGB values
-            if (computed.color) el.style.color = toRGB(computed.color);
-            if (computed.backgroundColor)
-              el.style.backgroundColor = toRGB(computed.backgroundColor);
-            if (computed.borderColor)
-              el.style.borderColor = toRGB(computed.borderColor);
-            if (computed.borderTopColor)
-              el.style.borderTopColor = toRGB(computed.borderTopColor);
-            if (computed.borderRightColor)
-              el.style.borderRightColor = toRGB(computed.borderRightColor);
-            if (computed.borderBottomColor)
-              el.style.borderBottomColor = toRGB(computed.borderBottomColor);
-            if (computed.borderLeftColor)
-              el.style.borderLeftColor = toRGB(computed.borderLeftColor);
-            if (computed.outlineColor)
-              el.style.outlineColor = toRGB(computed.outlineColor);
-
-            // Remove any gradient backgrounds that might use lab/oklch
-            if (
-              computed.backgroundImage &&
-              computed.backgroundImage !== "none"
-            ) {
-              el.style.backgroundImage = "none";
-            }
-          });
-        },
+      // Restore original styles
+      allElements.forEach((el: any) => {
+        const original = originalStyles.get(el);
+        if (original) {
+          el.style.color = original.color;
+          el.style.backgroundColor = original.backgroundColor;
+          el.style.borderColor = original.borderColor;
+          el.style.borderTopColor = original.borderTopColor;
+          el.style.borderRightColor = original.borderRightColor;
+          el.style.borderBottomColor = original.borderBottomColor;
+          el.style.borderLeftColor = original.borderLeftColor;
+          el.style.outlineColor = original.outlineColor;
+          el.style.backgroundImage = original.backgroundImage;
+        }
       });
 
       const imgData = canvas.toDataURL("image/png");
