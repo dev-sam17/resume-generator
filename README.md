@@ -15,13 +15,14 @@ A full-stack Next.js application for creating, managing, and sharing multiple ve
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: Next.js 15 (App Router), React 19, Tailwind CSS
+- **Frontend**: Next.js 16.1 (App Router), React 19, Tailwind CSS 4
 - **UI Components**: shadcn/ui, Radix UI, Lucide Icons
-- **Authentication**: NextAuth.js with Google OAuth
-- **Database**: PostgreSQL with Prisma ORM
+- **Authentication**: NextAuth.js 5 (beta) with Google OAuth
+- **Database**: PostgreSQL with Prisma ORM 7.2 + Neon Adapter
 - **Storage**: Google Cloud Storage
 - **PDF Generation**: jsPDF + html2canvas
-- **Form Management**: React Hook Form + Zod validation
+- **Form Management**: React Hook Form + Zod 4 validation
+- **Package Manager**: pnpm
 
 ## 📋 Prerequisites
 
@@ -33,22 +34,28 @@ A full-stack Next.js application for creating, managing, and sharing multiple ve
 ## 🔧 Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd resume-generator
    ```
 
 2. **Install dependencies**
+
    ```bash
    pnpm install
    ```
 
+   > **Note**: The project uses pnpm. Build scripts for Prisma are configured in `.npmrc` and `pnpm-workspace.yaml`.
+
 3. **Set up environment variables**
+
    ```bash
    cp .env.example .env
    ```
 
    Fill in the following variables in `.env`:
+
    ```env
    DATABASE_URL="postgresql://user:password@localhost:5432/resume_generator"
    NEXTAUTH_SECRET="generate-with-openssl-rand-base64-32"
@@ -61,12 +68,22 @@ A full-stack Next.js application for creating, managing, and sharing multiple ve
    ```
 
 4. **Set up the database**
+
    ```bash
-   pnpm prisma generate
-   pnpm prisma migrate dev
+   pnpm db:generate
+   pnpm db:migrate
    ```
 
+   Or use the setup script:
+
+   ```bash
+   pnpm setup
+   ```
+
+   > **Prisma 7**: This project uses Prisma 7 with the default client output location (`node_modules/@prisma/client`) for optimal Vercel deployment compatibility.
+
 5. **Run the development server**
+
    ```bash
    pnpm dev
    ```
@@ -111,7 +128,9 @@ resume-generator/
 │   ├── storage.ts        # GCS utilities
 │   └── utils.ts          # Utility functions
 ├── prisma/
-│   └── schema.prisma     # Database schema
+│   ├── schema.prisma     # Database schema
+│   └── migrations/       # Database migrations
+├── prisma.config.ts      # Prisma 7 configuration
 ├── types/
 │   └── resume.ts         # TypeScript types
 ├── auth.ts               # NextAuth configuration
@@ -141,10 +160,16 @@ Resumes are stored as JSON with the following structure:
 
 ### Database Hosting
 
+- **Neon** (Recommended - project uses `@prisma/adapter-neon`)
 - **Vercel Postgres**
 - **Railway**
 - **Supabase**
-- **Neon**
+
+> **Important for Vercel Deployment**:
+>
+> - Ensure `DATABASE_URL` is set in Vercel environment variables
+> - The `postinstall` script automatically runs `prisma generate` during builds
+> - Prisma uses the default output location for serverless compatibility
 
 ## 📝 Usage
 
@@ -175,7 +200,8 @@ MIT License - feel free to use this project for personal or commercial purposes.
 
 - PDF generation may have layout issues with very long content
 - GCS upload requires proper service account configuration
-- First-time setup requires manual database migration
+- Windows users may encounter Turbopack symlink errors locally (does not affect Vercel deployments)
+- Type compatibility between Prisma 7 and `@auth/prisma-adapter` may show warnings (handled in code)
 
 ## 📧 Support
 
