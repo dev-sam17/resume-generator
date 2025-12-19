@@ -34,6 +34,8 @@ export function SkillInput({
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(0);
   const [isAddingToDb, setIsAddingToDb] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [pendingSkill, setPendingSkill] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -102,8 +104,8 @@ export function SkillInput({
     }
   };
 
-  const handleAddToDatabase = async () => {
-    if (!inputValue.trim() || !categoryKey) return;
+  const handleAddToDatabase = async (skillName: string) => {
+    if (!skillName.trim() || !categoryKey) return;
 
     setIsAddingToDb(true);
     try {
@@ -111,23 +113,39 @@ export function SkillInput({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: inputValue.trim(),
+          name: skillName.trim(),
           categoryKey: categoryKey,
         }),
       });
 
       if (response.ok) {
-        addSkill(inputValue.trim());
+        addSkill(skillName.trim());
+        setShowConfirmDialog(false);
+        setPendingSkill("");
       } else {
         const error = await response.json();
-        alert(error.error || "Failed to add skill to database");
+        console.error("Failed to add skill:", error.error);
       }
     } catch (error) {
       console.error("Error adding skill:", error);
-      alert("Failed to add skill to database");
     } finally {
       setIsAddingToDb(false);
     }
+  };
+
+  const promptAddToDatabase = () => {
+    setPendingSkill(inputValue.trim());
+    setShowConfirmDialog(true);
+  };
+
+  const confirmAddToDatabase = () => {
+    handleAddToDatabase(pendingSkill);
+  };
+
+  const cancelAddToDatabase = () => {
+    setShowConfirmDialog(false);
+    setPendingSkill("");
+    inputRef.current?.focus();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -231,28 +249,58 @@ export function SkillInput({
           </div>
         )}
 
-        {showAddToDbButton && (
+        {showAddToDbButton && !showConfirmDialog && (
           <div className="mt-2">
             <Button
               type="button"
               variant="outline"
               size="sm"
-              onClick={handleAddToDatabase}
+              onClick={promptAddToDatabase}
               disabled={isAddingToDb}
               className="w-full border-dashed border-2 border-purple-300 dark:border-purple-700 hover:bg-purple-50 dark:hover:bg-purple-900/20"
             >
-              {isAddingToDb ? (
-                <>
-                  <Database className="h-4 w-4 mr-2 animate-pulse" />
-                  Adding to database...
-                </>
-              ) : (
-                <>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add "{inputValue.trim()}" to database
-                </>
-              )}
+              <Plus className="h-4 w-4 mr-2" />
+              Add "{inputValue.trim()}" to database
             </Button>
+          </div>
+        )}
+
+        {showConfirmDialog && (
+          <div className="mt-2 p-3 bg-purple-50 dark:bg-purple-900/20 border-2 border-purple-300 dark:border-purple-700 rounded-lg">
+            <p className="text-sm font-medium text-gray-900 dark:text-white mb-3">
+              Add "{pendingSkill}" to the skills database?
+            </p>
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                size="sm"
+                onClick={confirmAddToDatabase}
+                disabled={isAddingToDb}
+                className="flex-1 bg-purple-600 hover:bg-purple-700 text-white"
+              >
+                {isAddingToDb ? (
+                  <>
+                    <Database className="h-4 w-4 mr-2 animate-pulse" />
+                    Adding...
+                  </>
+                ) : (
+                  <>
+                    <Database className="h-4 w-4 mr-2" />
+                    Confirm
+                  </>
+                )}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={cancelAddToDatabase}
+                disabled={isAddingToDb}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+            </div>
           </div>
         )}
       </div>
