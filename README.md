@@ -54,18 +54,7 @@ A full-stack Next.js application for creating, managing, and sharing multiple ve
    cp .env.example .env
    ```
 
-   Fill in the following variables in `.env`:
-
-   ```env
-   DATABASE_URL="postgresql://user:password@localhost:5432/resume_generator"
-   NEXTAUTH_SECRET="generate-with-openssl-rand-base64-32"
-   NEXTAUTH_URL="http://localhost:3000"
-   GOOGLE_CLIENT_ID="your-google-client-id"
-   GOOGLE_CLIENT_SECRET="your-google-client-secret"
-   GCP_PROJECT_ID="your-gcp-project-id"
-   GCP_BUCKET_NAME="your-bucket-name"
-   GCP_SERVICE_ACCOUNT_KEY="base64-encoded-service-account-json"
-   ```
+   Fill in the variables in `.env`:
 
 4. **Set up the database**
 
