@@ -165,64 +165,128 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
   const handleDownloadPDF = async () => {
     setIsExporting(true);
     try {
-      console.log("Downloading PDF...");
       const element = previewRef.current;
       if (!element) return;
 
-      console.log("Converting to canvas...");
+      console.log("[PDF] Starting PDF download...");
+      console.log("[PDF] Converting to canvas...");
 
       const canvas = await html2canvas(element, {
         scale: 2,
         useCORS: true,
-        logging: false,
+        logging: true,
         backgroundColor: "#ffffff",
         onclone: (clonedDoc) => {
+          console.log("[PDF] onclone callback started");
           // Convert all color values to RGB format using colorizr
           const allElements = clonedDoc.querySelectorAll("*");
           const clonedWindow = clonedDoc.defaultView || window;
+          console.log(`[PDF] Processing ${allElements.length} elements`);
 
-          allElements.forEach((el: any) => {
+          let labColorCount = 0;
+          let oklchColorCount = 0;
+          let conversionErrors = 0;
+
+          allElements.forEach((el: any, index: number) => {
             const computed = clonedWindow.getComputedStyle(el);
 
             // Helper to convert any color to RGB using colorizr
-            const toRGB = (color: string) => {
+            const toRGB = (color: string, propertyName: string) => {
               if (!color || color === "transparent" || color === "none")
                 return color;
 
+              // Check if color contains lab or oklch
+              if (color.includes("lab(")) {
+                labColorCount++;
+                console.log(
+                  `[PDF] Found lab() color in ${propertyName} at element ${index}:`,
+                  color
+                );
+              }
+              if (color.includes("oklch(")) {
+                oklchColorCount++;
+                console.log(
+                  `[PDF] Found oklch() color in ${propertyName} at element ${index}:`,
+                  color
+                );
+              }
+
               try {
                 // Use colorizr to convert any color format to RGB
-                return convert(color, "rgb");
-              } catch {
+                const converted = convert(color, "rgb");
+                if (color.includes("lab(") || color.includes("oklch(")) {
+                  console.log(`[PDF] Converted ${color} -> ${converted}`);
+                }
+                return converted;
+              } catch (error) {
+                conversionErrors++;
+                console.error(
+                  `[PDF] Failed to convert color "${color}" in ${propertyName}:`,
+                  error
+                );
                 // Fallback to original color if conversion fails
                 return color;
               }
             };
 
             // Override all color properties with RGB values
-            if (computed.color) el.style.color = toRGB(computed.color);
+            if (computed.color) el.style.color = toRGB(computed.color, "color");
             if (computed.backgroundColor)
-              el.style.backgroundColor = toRGB(computed.backgroundColor);
+              el.style.backgroundColor = toRGB(
+                computed.backgroundColor,
+                "backgroundColor"
+              );
             if (computed.borderColor)
-              el.style.borderColor = toRGB(computed.borderColor);
+              el.style.borderColor = toRGB(computed.borderColor, "borderColor");
             if (computed.borderTopColor)
-              el.style.borderTopColor = toRGB(computed.borderTopColor);
+              el.style.borderTopColor = toRGB(
+                computed.borderTopColor,
+                "borderTopColor"
+              );
             if (computed.borderRightColor)
-              el.style.borderRightColor = toRGB(computed.borderRightColor);
+              el.style.borderRightColor = toRGB(
+                computed.borderRightColor,
+                "borderRightColor"
+              );
             if (computed.borderBottomColor)
-              el.style.borderBottomColor = toRGB(computed.borderBottomColor);
+              el.style.borderBottomColor = toRGB(
+                computed.borderBottomColor,
+                "borderBottomColor"
+              );
             if (computed.borderLeftColor)
-              el.style.borderLeftColor = toRGB(computed.borderLeftColor);
+              el.style.borderLeftColor = toRGB(
+                computed.borderLeftColor,
+                "borderLeftColor"
+              );
             if (computed.outlineColor)
-              el.style.outlineColor = toRGB(computed.outlineColor);
+              el.style.outlineColor = toRGB(
+                computed.outlineColor,
+                "outlineColor"
+              );
 
             // Remove any gradient backgrounds that might use lab/oklch
             if (
               computed.backgroundImage &&
               computed.backgroundImage !== "none"
             ) {
+              if (
+                computed.backgroundImage.includes("lab(") ||
+                computed.backgroundImage.includes("oklch(")
+              ) {
+                console.log(
+                  `[PDF] Removing gradient with lab/oklch at element ${index}:`,
+                  computed.backgroundImage
+                );
+              }
               el.style.backgroundImage = "none";
             }
           });
+
+          console.log(`[PDF] Color conversion summary:`);
+          console.log(`  - lab() colors found: ${labColorCount}`);
+          console.log(`  - oklch() colors found: ${oklchColorCount}`);
+          console.log(`  - Conversion errors: ${conversionErrors}`);
+          console.log("[PDF] onclone callback completed");
         },
       });
 
