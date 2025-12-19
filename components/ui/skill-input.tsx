@@ -146,7 +146,7 @@ export function SkillInput({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: skillName.trim(),
+          skillName: skillName.trim(),
           categoryKey: category,
         }),
       });
