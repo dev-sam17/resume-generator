@@ -224,8 +224,7 @@ export function SkillInput({
   const showAddToDbButton =
     inputValue.trim() &&
     !showSuggestions &&
-    !selectedSkills.includes(inputValue.trim()) &&
-    categoryKey;
+    !selectedSkills.includes(inputValue.trim());
 
   return (
     <div className="space-y-2">
