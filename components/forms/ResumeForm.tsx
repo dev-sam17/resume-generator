@@ -175,18 +175,22 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
         onclone: (clonedDoc) => {
           // Convert all color values to RGB format to avoid lab/oklch parsing issues
           const allElements = clonedDoc.querySelectorAll("*");
+          const clonedWindow = clonedDoc.defaultView || window;
+
           allElements.forEach((el: any) => {
-            const computed = window.getComputedStyle(el);
+            const computed = clonedWindow.getComputedStyle(el);
 
             // Helper to convert any color to RGB
             const toRGB = (color: string) => {
               if (!color || color === "transparent" || color === "none")
                 return color;
-              const temp = document.createElement("div");
+
+              // Create temp element in cloned document
+              const temp = clonedDoc.createElement("div");
               temp.style.color = color;
-              document.body.appendChild(temp);
-              const rgb = window.getComputedStyle(temp).color;
-              document.body.removeChild(temp);
+              clonedDoc.body.appendChild(temp);
+              const rgb = clonedWindow.getComputedStyle(temp).color;
+              clonedDoc.body.removeChild(temp);
               return rgb;
             };
 
@@ -534,7 +538,8 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
                   Live Preview
                 </h3>
                 <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">
-                  See your resume update in real-time as you type
+                  Click "Update Resume" to see changes in real-time if it
+                  doesn't update automatically
                 </p>
               </div>
               <div className="flex items-center gap-2">

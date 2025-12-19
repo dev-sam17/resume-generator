@@ -61,18 +61,22 @@ export default function ViewResumePage() {
         onclone: (clonedDoc) => {
           // Convert all color values to RGB format to avoid lab/oklch parsing issues
           const allElements = clonedDoc.querySelectorAll("*");
+          const clonedWindow = clonedDoc.defaultView || window;
+
           allElements.forEach((el: any) => {
-            const computed = window.getComputedStyle(el);
+            const computed = clonedWindow.getComputedStyle(el);
 
             // Helper to convert any color to RGB
             const toRGB = (color: string) => {
               if (!color || color === "transparent" || color === "none")
                 return color;
-              const temp = document.createElement("div");
+
+              // Create temp element in cloned document
+              const temp = clonedDoc.createElement("div");
               temp.style.color = color;
-              document.body.appendChild(temp);
-              const rgb = window.getComputedStyle(temp).color;
-              document.body.removeChild(temp);
+              clonedDoc.body.appendChild(temp);
+              const rgb = clonedWindow.getComputedStyle(temp).color;
+              clonedDoc.body.removeChild(temp);
               return rgb;
             };
 
@@ -153,18 +157,22 @@ export default function ViewResumePage() {
         onclone: (clonedDoc) => {
           // Convert all color values to RGB format to avoid lab/oklch parsing issues
           const allElements = clonedDoc.querySelectorAll("*");
+          const clonedWindow = clonedDoc.defaultView || window;
+
           allElements.forEach((el: any) => {
-            const computed = window.getComputedStyle(el);
+            const computed = clonedWindow.getComputedStyle(el);
 
             // Helper to convert any color to RGB
             const toRGB = (color: string) => {
               if (!color || color === "transparent" || color === "none")
                 return color;
-              const temp = document.createElement("div");
+
+              // Create temp element in cloned document
+              const temp = clonedDoc.createElement("div");
               temp.style.color = color;
-              document.body.appendChild(temp);
-              const rgb = window.getComputedStyle(temp).color;
-              document.body.removeChild(temp);
+              clonedDoc.body.appendChild(temp);
+              const rgb = clonedWindow.getComputedStyle(temp).color;
+              clonedDoc.body.removeChild(temp);
               return rgb;
             };
 
