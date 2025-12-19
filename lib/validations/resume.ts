@@ -11,14 +11,7 @@ export const contactSchema = z.object({
   portfolio: z.string().url().optional().or(z.literal("")),
 });
 
-export const skillsSchema = z.object({
-  languages: z.array(z.string()),
-  frameworks: z.array(z.string()),
-  databases: z.array(z.string()),
-  tools: z.array(z.string()),
-  cloud: z.array(z.string()),
-  methodologies: z.array(z.string()),
-});
+export const skillsSchema = z.record(z.string(), z.array(z.string()));
 
 export const experienceSchema = z.object({
   title: z.string().min(1, "Job title is required"),

@@ -9,14 +9,7 @@ export interface Contact {
   portfolio?: string;
 }
 
-export interface Skills {
-  languages: string[];
-  frameworks: string[];
-  databases: string[];
-  tools: string[];
-  cloud: string[];
-  methodologies: string[];
-}
+export type Skills = Record<string, string[]>;
 
 export interface Experience {
   title: string;
