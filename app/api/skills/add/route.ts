@@ -46,7 +46,7 @@ export async function POST(request: Request) {
         categoryNameMap[categoryKey] ||
         categoryKey
           .replace(/([A-Z])/g, " $1")
-          .replace(/^./, (str) => str.toUpperCase())
+          .replace(/^./, (str: string) => str.toUpperCase())
           .trim();
 
       category = await prisma.skillCategory.create({
