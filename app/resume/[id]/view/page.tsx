@@ -8,6 +8,7 @@ import { ArrowLeft, Download, Share2, Edit } from "lucide-react";
 import Link from "next/link";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import { convert } from "colorizr";
 import type { ResumeData } from "@/types/resume";
 
 interface Resume {
@@ -59,25 +60,25 @@ export default function ViewResumePage() {
         logging: false,
         backgroundColor: "#ffffff",
         onclone: (clonedDoc) => {
-          // Convert all color values to RGB format to avoid lab/oklch parsing issues
+          // Convert all color values to RGB format using colorizr
           const allElements = clonedDoc.querySelectorAll("*");
           const clonedWindow = clonedDoc.defaultView || window;
 
           allElements.forEach((el: any) => {
             const computed = clonedWindow.getComputedStyle(el);
 
-            // Helper to convert any color to RGB
+            // Helper to convert any color to RGB using colorizr
             const toRGB = (color: string) => {
               if (!color || color === "transparent" || color === "none")
                 return color;
 
-              // Create temp element in cloned document
-              const temp = clonedDoc.createElement("div");
-              temp.style.color = color;
-              clonedDoc.body.appendChild(temp);
-              const rgb = clonedWindow.getComputedStyle(temp).color;
-              clonedDoc.body.removeChild(temp);
-              return rgb;
+              try {
+                // Use colorizr to convert any color format to RGB
+                return convert(color, "rgb");
+              } catch {
+                // Fallback to original color if conversion fails
+                return color;
+              }
             };
 
             // Override all color properties with RGB values
@@ -155,25 +156,25 @@ export default function ViewResumePage() {
         logging: false,
         backgroundColor: "#ffffff",
         onclone: (clonedDoc) => {
-          // Convert all color values to RGB format to avoid lab/oklch parsing issues
+          // Convert all color values to RGB format using colorizr
           const allElements = clonedDoc.querySelectorAll("*");
           const clonedWindow = clonedDoc.defaultView || window;
 
           allElements.forEach((el: any) => {
             const computed = clonedWindow.getComputedStyle(el);
 
-            // Helper to convert any color to RGB
+            // Helper to convert any color to RGB using colorizr
             const toRGB = (color: string) => {
               if (!color || color === "transparent" || color === "none")
                 return color;
 
-              // Create temp element in cloned document
-              const temp = clonedDoc.createElement("div");
-              temp.style.color = color;
-              clonedDoc.body.appendChild(temp);
-              const rgb = clonedWindow.getComputedStyle(temp).color;
-              clonedDoc.body.removeChild(temp);
-              return rgb;
+              try {
+                // Use colorizr to convert any color format to RGB
+                return convert(color, "rgb");
+              } catch {
+                // Fallback to original color if conversion fails
+                return color;
+              }
             };
 
             // Override all color properties with RGB values

@@ -30,6 +30,7 @@ import { useRouter } from "next/navigation";
 import { z } from "zod";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import { convert } from "colorizr";
 
 type FormData = z.infer<typeof createResumeSchema>;
 
@@ -164,8 +165,11 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
   const handleDownloadPDF = async () => {
     setIsExporting(true);
     try {
+      console.log("Downloading PDF...");
       const element = previewRef.current;
       if (!element) return;
+
+      console.log("Converting to canvas...");
 
       const canvas = await html2canvas(element, {
         scale: 2,
@@ -173,25 +177,25 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
         logging: false,
         backgroundColor: "#ffffff",
         onclone: (clonedDoc) => {
-          // Convert all color values to RGB format to avoid lab/oklch parsing issues
+          // Convert all color values to RGB format using colorizr
           const allElements = clonedDoc.querySelectorAll("*");
           const clonedWindow = clonedDoc.defaultView || window;
 
           allElements.forEach((el: any) => {
             const computed = clonedWindow.getComputedStyle(el);
 
-            // Helper to convert any color to RGB
+            // Helper to convert any color to RGB using colorizr
             const toRGB = (color: string) => {
               if (!color || color === "transparent" || color === "none")
                 return color;
 
-              // Create temp element in cloned document
-              const temp = clonedDoc.createElement("div");
-              temp.style.color = color;
-              clonedDoc.body.appendChild(temp);
-              const rgb = clonedWindow.getComputedStyle(temp).color;
-              clonedDoc.body.removeChild(temp);
-              return rgb;
+              try {
+                // Use colorizr to convert any color format to RGB
+                return convert(color, "rgb");
+              } catch {
+                // Fallback to original color if conversion fails
+                return color;
+              }
             };
 
             // Override all color properties with RGB values
@@ -222,12 +226,16 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
         },
       });
 
+      console.log({ canvas });
+
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF({
         orientation: "portrait",
         unit: "mm",
         format: "a4",
       });
+
+      console.log({ imgData });
 
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
@@ -247,6 +255,8 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
       );
 
       const fileName = watchedData.title || "resume";
+
+      console.log({ fileName });
       pdf.save(`${fileName}.pdf`);
       showToast("PDF downloaded successfully!", "success");
     } catch (error) {
