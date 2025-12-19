@@ -76,68 +76,34 @@ export function CompactLayout({ data }: LayoutProps) {
         {/* Left Column - Skills, Education, Certifications */}
         <div className="space-y-4">
           {/* Technical Skills */}
-          {(skills.languages.length > 0 || skills.frameworks.length > 0) && (
+          {Object.keys(skills).some(
+            (key) => skills[key as keyof typeof skills]?.length > 0
+          ) && (
             <div>
               <h2 className="text-sm font-bold text-gray-900 mb-1 uppercase border-b border-gray-400">
                 Skills
               </h2>
               <div className="space-y-1 text-xs">
-                {skills.languages.length > 0 && (
-                  <div>
-                    <span className="font-semibold text-gray-900">
-                      Languages:
-                    </span>
-                    <div className="text-gray-700">
-                      {skills.languages.join(", ")}
+                {Object.entries(skills).map(([category, skillList]) => {
+                  if (!Array.isArray(skillList) || skillList.length === 0)
+                    return null;
+
+                  const categoryName = category
+                    .replace(/([A-Z])/g, " $1")
+                    .replace(/^./, (str) => str.toUpperCase())
+                    .trim();
+
+                  return (
+                    <div key={category}>
+                      <span className="font-semibold text-gray-900">
+                        {categoryName}:
+                      </span>
+                      <div className="text-gray-700">
+                        {skillList.join(", ")}
+                      </div>
                     </div>
-                  </div>
-                )}
-                {skills.frameworks.length > 0 && (
-                  <div>
-                    <span className="font-semibold text-gray-900">
-                      Frameworks:
-                    </span>
-                    <div className="text-gray-700">
-                      {skills.frameworks.join(", ")}
-                    </div>
-                  </div>
-                )}
-                {skills.databases.length > 0 && (
-                  <div>
-                    <span className="font-semibold text-gray-900">
-                      Databases:
-                    </span>
-                    <div className="text-gray-700">
-                      {skills.databases.join(", ")}
-                    </div>
-                  </div>
-                )}
-                {skills.tools.length > 0 && (
-                  <div>
-                    <span className="font-semibold text-gray-900">Tools:</span>
-                    <div className="text-gray-700">
-                      {skills.tools.join(", ")}
-                    </div>
-                  </div>
-                )}
-                {skills.cloud.length > 0 && (
-                  <div>
-                    <span className="font-semibold text-gray-900">Cloud:</span>
-                    <div className="text-gray-700">
-                      {skills.cloud.join(", ")}
-                    </div>
-                  </div>
-                )}
-                {skills.methodologies.length > 0 && (
-                  <div>
-                    <span className="font-semibold text-gray-900">
-                      Methods:
-                    </span>
-                    <div className="text-gray-700">
-                      {skills.methodologies.join(", ")}
-                    </div>
-                  </div>
-                )}
+                  );
+                })}
               </div>
             </div>
           )}

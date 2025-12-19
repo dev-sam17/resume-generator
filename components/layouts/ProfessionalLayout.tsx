@@ -78,60 +78,32 @@ export function ProfessionalLayout({ data }: LayoutProps) {
       )}
 
       {/* Core Competencies / Skills */}
-      {(skills.languages.length > 0 || skills.frameworks.length > 0) && (
+      {Object.keys(skills).some(
+        (key) => skills[key as keyof typeof skills]?.length > 0
+      ) && (
         <div className="mb-6">
           <h2 className="text-base font-bold text-gray-900 mb-2 pb-1 border-b-2 border-gray-900">
             CORE COMPETENCIES
           </h2>
           <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-            {skills.languages.length > 0 && (
-              <div>
-                <span className="font-semibold text-gray-900">Languages: </span>
-                <span className="text-gray-700">
-                  {skills.languages.join(", ")}
-                </span>
-              </div>
-            )}
-            {skills.frameworks.length > 0 && (
-              <div>
-                <span className="font-semibold text-gray-900">
-                  Frameworks:{" "}
-                </span>
-                <span className="text-gray-700">
-                  {skills.frameworks.join(", ")}
-                </span>
-              </div>
-            )}
-            {skills.databases.length > 0 && (
-              <div>
-                <span className="font-semibold text-gray-900">Databases: </span>
-                <span className="text-gray-700">
-                  {skills.databases.join(", ")}
-                </span>
-              </div>
-            )}
-            {skills.tools.length > 0 && (
-              <div>
-                <span className="font-semibold text-gray-900">Tools: </span>
-                <span className="text-gray-700">{skills.tools.join(", ")}</span>
-              </div>
-            )}
-            {skills.cloud.length > 0 && (
-              <div>
-                <span className="font-semibold text-gray-900">Cloud: </span>
-                <span className="text-gray-700">{skills.cloud.join(", ")}</span>
-              </div>
-            )}
-            {skills.methodologies.length > 0 && (
-              <div>
-                <span className="font-semibold text-gray-900">
-                  Methodologies:{" "}
-                </span>
-                <span className="text-gray-700">
-                  {skills.methodologies.join(", ")}
-                </span>
-              </div>
-            )}
+            {Object.entries(skills).map(([category, skillList]) => {
+              if (!Array.isArray(skillList) || skillList.length === 0)
+                return null;
+
+              const categoryName = category
+                .replace(/([A-Z])/g, " $1")
+                .replace(/^./, (str) => str.toUpperCase())
+                .trim();
+
+              return (
+                <div key={category}>
+                  <span className="font-semibold text-gray-900">
+                    {categoryName}:{" "}
+                  </span>
+                  <span className="text-gray-700">{skillList.join(", ")}</span>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}

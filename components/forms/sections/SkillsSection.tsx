@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { FormSection } from "./FormSection";
-import { Code2, Eye, Loader2 } from "lucide-react";
+import { Code2, Eye, Loader2, ChevronDown, ChevronUp } from "lucide-react";
 import { UseFormSetValue } from "react-hook-form";
 import { SkillInput } from "@/components/ui/skill-input";
 import { Button } from "@/components/ui/button";
@@ -39,6 +39,7 @@ export function SkillsSection({ setValue, defaultData }: SkillsSectionProps) {
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(
     new Set()
   );
+  const [categoryPanelCollapsed, setCategoryPanelCollapsed] = useState(false);
 
   useEffect(() => {
     const fetchSkills = async () => {
@@ -194,32 +195,50 @@ export function SkillsSection({ setValue, defaultData }: SkillsSectionProps) {
         }
       >
         {/* Category Selection Checkboxes */}
-        <div className="mb-6 p-4 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg border-2 border-purple-200 dark:border-purple-800">
-          <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
-            <Code2 className="h-4 w-4 text-purple-600 dark:text-purple-400" />
-            Select Categories to Include
-          </h4>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {categories.map((category) => (
-              <label
-                key={category.key}
-                className="flex items-center gap-2 p-2 rounded-md hover:bg-white/50 dark:hover:bg-gray-800/50 cursor-pointer transition-colors"
-              >
-                <input
-                  type="checkbox"
-                  checked={selectedCategories.has(category.key)}
-                  onChange={() => toggleCategory(category.key)}
-                  className="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {category.name}
-                  <span className="ml-1 text-xs text-gray-500 dark:text-gray-400">
-                    ({category.count})
-                  </span>
-                </span>
-              </label>
-            ))}
-          </div>
+        <div className="mb-6 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg border-2 border-purple-200 dark:border-purple-800 overflow-hidden">
+          <button
+            type="button"
+            onClick={() => setCategoryPanelCollapsed(!categoryPanelCollapsed)}
+            className="w-full p-4 flex items-center justify-between hover:bg-white/30 dark:hover:bg-gray-800/30 transition-colors"
+          >
+            <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+              <Code2 className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+              Select Categories to Include
+              <span className="text-xs font-normal text-gray-500 dark:text-gray-400">
+                ({selectedCategories.size} selected)
+              </span>
+            </h4>
+            {categoryPanelCollapsed ? (
+              <ChevronDown className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+            ) : (
+              <ChevronUp className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+            )}
+          </button>
+          {!categoryPanelCollapsed && (
+            <div className="p-4 pt-0">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {categories.map((category) => (
+                  <label
+                    key={category.key}
+                    className="flex items-center gap-2 p-2 rounded-md hover:bg-white/50 dark:hover:bg-gray-800/50 cursor-pointer transition-colors"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedCategories.has(category.key)}
+                      onChange={() => toggleCategory(category.key)}
+                      className="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {category.name}
+                      <span className="ml-1 text-xs text-gray-500 dark:text-gray-400">
+                        ({category.count})
+                      </span>
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="space-y-4">
