@@ -41,7 +41,9 @@ export function SkillInput({
 
   useEffect(() => {
     if (inputValue.trim()) {
-      const filtered = suggestions
+      // Remove duplicates and filter
+      const uniqueSuggestions = Array.from(new Set(suggestions));
+      const filtered = uniqueSuggestions
         .filter(
           (suggestion) =>
             suggestion.toLowerCase().includes(inputValue.toLowerCase()) &&
@@ -205,7 +207,7 @@ export function SkillInput({
           >
             {filteredSuggestions.map((suggestion, index) => (
               <button
-                key={suggestion}
+                key={`${suggestion}-${index}`}
                 type="button"
                 onClick={() => addSkill(suggestion)}
                 className={`w-full text-left px-4 py-2.5 hover:bg-linear-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-blue-900/20 dark:hover:to-purple-900/20 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-b-0 ${

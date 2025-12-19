@@ -101,7 +101,7 @@ export function FormSection({
       }`}
     >
       <CardHeader
-        className="cursor-pointer"
+        className={`cursor-pointer transition-all ${isCollapsed ? "py-3" : ""}`}
         onClick={() => setIsCollapsed(!isCollapsed)}
       >
         <div className="flex items-center justify-between">
