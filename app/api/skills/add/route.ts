@@ -20,16 +20,44 @@ export async function POST(request: Request) {
       );
     }
 
-    // Find the category
-    const category = await prisma.skillCategory.findUnique({
+    // Category name mapping based on key
+    const categoryNameMap: Record<string, string> = {
+      languages: "Programming Languages",
+      frameworks: "Frameworks & Libraries",
+      databases: "Databases & ORMs",
+      tools: "Tools & Technologies",
+      cloud: "Cloud Platforms",
+      methodologies: "Methodologies & Practices",
+      dataScience: "Data Science & ML",
+      blockchain: "Blockchain",
+      security: "Security",
+      mobile: "Mobile Development",
+      uiux: "UI/UX Design",
+    };
+
+    // Find or create the category
+    let category = await prisma.skillCategory.findUnique({
       where: { key: categoryKey },
     });
 
     if (!category) {
-      return NextResponse.json(
-        { error: "Category not found" },
-        { status: 404 }
-      );
+      // Create the category if it doesn't exist
+      const categoryName =
+        categoryNameMap[categoryKey] ||
+        categoryKey
+          .replace(/([A-Z])/g, " $1")
+          .replace(/^./, (str) => str.toUpperCase())
+          .trim();
+
+      category = await prisma.skillCategory.create({
+        data: {
+          name: categoryName,
+          key: categoryKey,
+          description: `Skills related to ${categoryName.toLowerCase()}`,
+          displayOrder:
+            Object.keys(categoryNameMap).indexOf(categoryKey) + 1 || 99,
+        },
+      });
     }
 
     // Check if skill already exists in this category
