@@ -22,10 +22,10 @@ export function ProfessionalLayout({ data }: LayoutProps) {
     <div className="bg-white p-12 shadow-lg max-w-[210mm] mx-auto">
       {/* Header - Professional with gray background */}
       <div className="bg-gray-100 -mx-12 -mt-12 px-12 pt-8 pb-6 mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">
           {contact.fullName}
         </h1>
-        <p className="text-lg text-gray-700 mb-3">{contact.title}</p>
+        <p className="text-base text-gray-700 mb-3">{contact.title}</p>
 
         <div className="grid grid-cols-2 gap-2 text-sm text-gray-700">
           <div className="flex items-center gap-2">
@@ -73,7 +73,7 @@ export function ProfessionalLayout({ data }: LayoutProps) {
           <h2 className="text-base font-bold text-gray-900 mb-2 pb-1 border-b-2 border-gray-900">
             PROFESSIONAL SUMMARY
           </h2>
-          <p className="text-gray-700 leading-relaxed">{summary}</p>
+          <p className="text-gray-700 leading-relaxed text-sm">{summary}</p>
         </div>
       )}
 
@@ -97,10 +97,12 @@ export function ProfessionalLayout({ data }: LayoutProps) {
 
               return (
                 <div key={category}>
-                  <span className="font-semibold text-gray-900">
+                  <span className="font-semibold text-gray-900 text-sm">
                     {categoryName}:{" "}
                   </span>
-                  <span className="text-gray-700">{skillList.join(", ")}</span>
+                  <span className="text-gray-700 text-sm">
+                    {skillList.join(", ")}
+                  </span>
                 </div>
               );
             })}
@@ -119,10 +121,10 @@ export function ProfessionalLayout({ data }: LayoutProps) {
               <div key={index}>
                 <div className="flex justify-between items-baseline mb-1">
                   <div>
-                    <h3 className="text-base font-bold text-gray-900">
+                    <h3 className="text-sm font-bold text-gray-900">
                       {exp.title}
                     </h3>
-                    <p className="text-gray-700">
+                    <p className="text-gray-700 text-sm">
                       {exp.company} | {exp.location}
                     </p>
                   </div>
@@ -130,7 +132,7 @@ export function ProfessionalLayout({ data }: LayoutProps) {
                     {exp.startDate} - {exp.endDate}
                   </span>
                 </div>
-                <ul className="list-disc list-outside ml-5 space-y-1 text-gray-700">
+                <ul className="list-disc list-outside ml-5 space-y-1 text-gray-700 text-sm">
                   {exp.achievements.map((achievement, i) => (
                     <li key={i}>{achievement}</li>
                   ))}
@@ -157,7 +159,9 @@ export function ProfessionalLayout({ data }: LayoutProps) {
             {projects.map((project, index) => (
               <div key={index}>
                 <div className="flex justify-between items-baseline">
-                  <h3 className="font-bold text-gray-900">{project.name}</h3>
+                  <h3 className="font-bold text-gray-900 text-sm">
+                    {project.name}
+                  </h3>
                   {project.link && (
                     <a
                       href={project.link}
@@ -170,7 +174,7 @@ export function ProfessionalLayout({ data }: LayoutProps) {
                   )}
                 </div>
                 <p className="text-sm text-gray-600 mb-1">{project.role}</p>
-                <p className="text-gray-700">{project.description}</p>
+                <p className="text-gray-700 text-sm">{project.description}</p>
                 {project.technologies && project.technologies.length > 0 && (
                   <p className="text-sm text-gray-600 mt-1">
                     <span className="font-semibold">Technologies: </span>
@@ -193,8 +197,10 @@ export function ProfessionalLayout({ data }: LayoutProps) {
             <div className="space-y-2">
               {education.map((edu, index) => (
                 <div key={index}>
-                  <h3 className="font-bold text-gray-900">{edu.degree}</h3>
-                  <p className="text-gray-700">{edu.institution}</p>
+                  <h3 className="font-bold text-gray-900 text-sm">
+                    {edu.degree}
+                  </h3>
+                  <p className="text-gray-700 text-sm">{edu.institution}</p>
                   <p className="text-sm text-gray-600">{edu.year}</p>
                 </div>
               ))}
@@ -211,8 +217,10 @@ export function ProfessionalLayout({ data }: LayoutProps) {
             <div className="space-y-2">
               {certifications.map((cert, index) => (
                 <div key={index}>
-                  <h3 className="font-bold text-gray-900">{cert.name}</h3>
-                  <p className="text-gray-700">{cert.authority}</p>
+                  <h3 className="font-bold text-gray-900 text-sm">
+                    {cert.name}
+                  </h3>
+                  <p className="text-gray-700 text-sm">{cert.authority}</p>
                   <p className="text-sm text-gray-600">{cert.date}</p>
                 </div>
               ))}

@@ -22,10 +22,10 @@ export function MinimalLayout({ data }: LayoutProps) {
     <div className="bg-white p-12 shadow-lg max-w-[210mm] mx-auto">
       {/* Header - Ultra minimal */}
       <div className="mb-8">
-        <h1 className="text-5xl font-light text-gray-900 mb-1">
+        <h1 className="text-2xl font-light text-gray-900 mb-1">
           {contact.fullName}
         </h1>
-        <p className="text-xl text-gray-600 mb-4">{contact.title}</p>
+        <p className="text-base text-gray-600 mb-4">{contact.title}</p>
 
         <div className="flex flex-wrap gap-3 text-sm text-gray-600 border-t border-gray-200 pt-3">
           <span>{contact.email}</span>
@@ -63,34 +63,34 @@ export function MinimalLayout({ data }: LayoutProps) {
       {/* Professional Summary */}
       {summary && (
         <div className="mb-8">
-          <h2 className="text-xs font-bold text-gray-500 mb-3 uppercase tracking-widest">
+          <h2 className="text-sm font-bold text-gray-500 mb-3 uppercase tracking-widest">
             About
           </h2>
-          <p className="text-gray-700 leading-relaxed">{summary}</p>
+          <p className="text-gray-700 leading-relaxed text-sm">{summary}</p>
         </div>
       )}
 
       {/* Work Experience */}
       {experience.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-xs font-bold text-gray-500 mb-3 uppercase tracking-widest">
+          <h2 className="text-sm font-bold text-gray-500 mb-3 uppercase tracking-widest">
             Experience
           </h2>
           <div className="space-y-6">
             {experience.map((exp, index) => (
               <div key={index}>
                 <div className="flex justify-between items-baseline mb-1">
-                  <h3 className="text-lg font-medium text-gray-900">
+                  <h3 className="text-sm font-medium text-gray-900">
                     {exp.title}
                   </h3>
                   <span className="text-sm text-gray-500 whitespace-nowrap">
                     {exp.startDate} — {exp.endDate}
                   </span>
                 </div>
-                <p className="text-gray-600 mb-2">
+                <p className="text-gray-600 mb-2 text-sm">
                   {exp.company}, {exp.location}
                 </p>
-                <ul className="space-y-1 text-gray-700">
+                <ul className="space-y-1 text-gray-700 text-sm">
                   {exp.achievements.map((achievement, i) => (
                     <li
                       key={i}
@@ -114,14 +114,14 @@ export function MinimalLayout({ data }: LayoutProps) {
       {/* Projects */}
       {projects.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-xs font-bold text-gray-500 mb-3 uppercase tracking-widest">
+          <h2 className="text-sm font-bold text-gray-500 mb-3 uppercase tracking-widest">
             Projects
           </h2>
           <div className="space-y-4">
             {projects.map((project, index) => (
               <div key={index}>
                 <div className="flex justify-between items-baseline">
-                  <h3 className="text-lg font-medium text-gray-900">
+                  <h3 className="text-sm font-medium text-gray-900">
                     {project.name}
                   </h3>
                   {project.link && (
@@ -136,7 +136,7 @@ export function MinimalLayout({ data }: LayoutProps) {
                   )}
                 </div>
                 <p className="text-sm text-gray-600 mb-1">{project.role}</p>
-                <p className="text-gray-700">{project.description}</p>
+                <p className="text-gray-700 text-sm">{project.description}</p>
                 {project.technologies && project.technologies.length > 0 && (
                   <p className="text-sm text-gray-500 mt-1">
                     {project.technologies.join(" • ")}
@@ -153,7 +153,7 @@ export function MinimalLayout({ data }: LayoutProps) {
         (key) => skills[key as keyof typeof skills]?.length > 0
       ) && (
         <div className="mb-8">
-          <h2 className="text-xs font-bold text-gray-500 mb-3 uppercase tracking-widest">
+          <h2 className="text-sm font-bold text-gray-500 mb-3 uppercase tracking-widest">
             Skills
           </h2>
           <div className="space-y-2">
@@ -168,10 +168,12 @@ export function MinimalLayout({ data }: LayoutProps) {
 
               return (
                 <div key={category}>
-                  <span className="font-medium text-gray-900">
+                  <span className="font-medium text-gray-900 text-sm">
                     {categoryName}:{" "}
                   </span>
-                  <span className="text-gray-700">{skillList.join(" • ")}</span>
+                  <span className="text-gray-700 text-sm">
+                    {skillList.join(" • ")}
+                  </span>
                 </div>
               );
             })}
@@ -184,14 +186,16 @@ export function MinimalLayout({ data }: LayoutProps) {
         {/* Education */}
         {education.length > 0 && (
           <div>
-            <h2 className="text-xs font-bold text-gray-500 mb-3 uppercase tracking-widest">
+            <h2 className="text-sm font-bold text-gray-500 mb-3 uppercase tracking-widest">
               Education
             </h2>
             <div className="space-y-2">
               {education.map((edu, index) => (
                 <div key={index}>
-                  <h3 className="font-medium text-gray-900">{edu.degree}</h3>
-                  <p className="text-gray-700">{edu.institution}</p>
+                  <h3 className="font-medium text-gray-900 text-sm">
+                    {edu.degree}
+                  </h3>
+                  <p className="text-gray-700 text-sm">{edu.institution}</p>
                   <p className="text-sm text-gray-500">{edu.year}</p>
                 </div>
               ))}
@@ -202,14 +206,16 @@ export function MinimalLayout({ data }: LayoutProps) {
         {/* Certifications */}
         {certifications.length > 0 && (
           <div>
-            <h2 className="text-xs font-bold text-gray-500 mb-3 uppercase tracking-widest">
+            <h2 className="text-sm font-bold text-gray-500 mb-3 uppercase tracking-widest">
               Certifications
             </h2>
             <div className="space-y-2">
               {certifications.map((cert, index) => (
                 <div key={index}>
-                  <h3 className="font-medium text-gray-900">{cert.name}</h3>
-                  <p className="text-gray-700">{cert.authority}</p>
+                  <h3 className="font-medium text-gray-900 text-sm">
+                    {cert.name}
+                  </h3>
+                  <p className="text-gray-700 text-sm">{cert.authority}</p>
                   <p className="text-sm text-gray-500">{cert.date}</p>
                 </div>
               ))}

@@ -22,10 +22,10 @@ export function ClassicLayout({ data }: LayoutProps) {
     <div className="bg-white p-12 shadow-lg max-w-[210mm] mx-auto">
       {/* Header - Traditional centered */}
       <div className="text-center border-b-2 border-gray-900 pb-4 mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-1 uppercase tracking-wide">
+        <h1 className="text-2xl font-bold text-gray-900 mb-1 uppercase tracking-wide">
           {contact.fullName}
         </h1>
-        <p className="text-lg text-gray-700 mb-3">{contact.title}</p>
+        <p className="text-base text-gray-700 mb-3">{contact.title}</p>
 
         <div className="flex flex-wrap justify-center gap-3 text-sm text-gray-600">
           <div className="flex items-center gap-1">
@@ -71,7 +71,7 @@ export function ClassicLayout({ data }: LayoutProps) {
       {/* Professional Summary */}
       {summary && (
         <div className="mb-5">
-          <h2 className="text-lg font-bold text-gray-900 mb-2 uppercase tracking-wide border-b border-gray-400 pb-1">
+          <h2 className="text-base font-bold text-gray-900 mb-2 uppercase tracking-wide border-b border-gray-400 pb-1">
             Professional Summary
           </h2>
           <p className="text-gray-700 leading-relaxed text-sm">{summary}</p>
@@ -83,7 +83,7 @@ export function ClassicLayout({ data }: LayoutProps) {
         (key) => skills[key as keyof typeof skills]?.length > 0
       ) && (
         <div className="mb-5">
-          <h2 className="text-lg font-bold text-gray-900 mb-2 uppercase tracking-wide border-b border-gray-400 pb-1">
+          <h2 className="text-base font-bold text-gray-900 mb-2 uppercase tracking-wide border-b border-gray-400 pb-1">
             Technical Skills
           </h2>
           <div className="space-y-1 text-sm">
@@ -112,7 +112,7 @@ export function ClassicLayout({ data }: LayoutProps) {
       {/* Work Experience */}
       {experience.length > 0 && (
         <div className="mb-5">
-          <h2 className="text-lg font-bold text-gray-900 mb-2 uppercase tracking-wide border-b border-gray-400 pb-1">
+          <h2 className="text-base font-bold text-gray-900 mb-2 uppercase tracking-wide border-b border-gray-400 pb-1">
             Professional Experience
           </h2>
           <div className="space-y-3">
@@ -120,7 +120,7 @@ export function ClassicLayout({ data }: LayoutProps) {
               <div key={index}>
                 <div className="flex justify-between items-baseline mb-1">
                   <div>
-                    <h3 className="font-bold text-gray-900 text-base">
+                    <h3 className="font-bold text-gray-900 text-sm">
                       {exp.title}
                     </h3>
                     <p className="text-gray-700 text-sm italic">
@@ -150,14 +150,14 @@ export function ClassicLayout({ data }: LayoutProps) {
       {/* Projects */}
       {projects.length > 0 && (
         <div className="mb-5">
-          <h2 className="text-lg font-bold text-gray-900 mb-2 uppercase tracking-wide border-b border-gray-400 pb-1">
+          <h2 className="text-base font-bold text-gray-900 mb-2 uppercase tracking-wide border-b border-gray-400 pb-1">
             Projects
           </h2>
           <div className="space-y-2">
             {projects.map((project, index) => (
               <div key={index}>
                 <div className="flex justify-between items-baseline">
-                  <h3 className="font-bold text-gray-900 text-base">
+                  <h3 className="font-bold text-gray-900 text-sm">
                     {project.name}
                   </h3>
                   {project.link && (
@@ -189,14 +189,14 @@ export function ClassicLayout({ data }: LayoutProps) {
       {/* Education */}
       {education.length > 0 && (
         <div className="mb-5">
-          <h2 className="text-lg font-bold text-gray-900 mb-2 uppercase tracking-wide border-b border-gray-400 pb-1">
+          <h2 className="text-base font-bold text-gray-900 mb-2 uppercase tracking-wide border-b border-gray-400 pb-1">
             Education
           </h2>
           <div className="space-y-2">
             {education.map((edu, index) => (
               <div key={index} className="flex justify-between items-baseline">
                 <div>
-                  <h3 className="font-bold text-gray-900 text-base">
+                  <h3 className="font-bold text-gray-900 text-sm">
                     {edu.degree}
                   </h3>
                   <p className="text-gray-700 text-sm">{edu.institution}</p>
@@ -211,7 +211,7 @@ export function ClassicLayout({ data }: LayoutProps) {
       {/* Certifications */}
       {certifications.length > 0 && (
         <div className="mb-5">
-          <h2 className="text-lg font-bold text-gray-900 mb-2 uppercase tracking-wide border-b border-gray-400 pb-1">
+          <h2 className="text-base font-bold text-gray-900 mb-2 uppercase tracking-wide border-b border-gray-400 pb-1">
             Certifications
           </h2>
           <div className="space-y-1">

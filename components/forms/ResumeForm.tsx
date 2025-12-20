@@ -335,27 +335,43 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
 
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
+      const bottomMargin = 6; // 20mm bottom margin to avoid mid-line breaks
+      const topMarginSubsequent = 10; // 20mm top margin for pages 2+
+      const firstPageHeight = pdfHeight - bottomMargin;
+      const subsequentPageHeight =
+        pdfHeight - bottomMargin - topMarginSubsequent;
+
       const imgWidth = canvas.width;
       const imgHeight = canvas.height;
-      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-      const imgX = (pdfWidth - imgWidth * ratio) / 2;
-      const imgY = 0;
 
-      pdf.addImage(
-        imgData,
-        "JPEG",
-        imgX,
-        imgY,
-        imgWidth * ratio,
-        imgHeight * ratio,
-        undefined,
-        "FAST"
-      );
+      // Scale to fit width (don't scale by height to avoid shrinking)
+      const widthRatio = pdfWidth / imgWidth;
+      const scaledWidth = pdfWidth;
+      const scaledHeight = imgHeight * widthRatio;
 
-      // Extract all hyperlinks and add them to PDF
+      const imgX = 0; // Full width, no centering needed
+
+      // Calculate how many pages needed
+      let totalPages = 1;
+      let remainingHeight = scaledHeight - firstPageHeight;
+      while (remainingHeight > 0) {
+        totalPages++;
+        remainingHeight -= subsequentPageHeight;
+      }
+
+      // Extract all hyperlinks for later positioning
       const links = element.querySelectorAll("a[href]");
       const elementRect = element.getBoundingClientRect();
       const canvasScale = 4; // Must match html2canvas scale
+
+      const linkData: Array<{
+        href: string;
+        pdfX: number;
+        pdfY: number;
+        width: number;
+        height: number;
+        page: number;
+      }> = [];
 
       links.forEach((link) => {
         const href = link.getAttribute("href");
@@ -373,15 +389,103 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
           const canvasHeight = linkRect.height * canvasScale;
 
           // Convert from canvas pixels to PDF mm
-          const pdfX = imgX + (canvasX / imgWidth) * (imgWidth * ratio);
-          const pdfY = imgY + (canvasY / imgHeight) * (imgHeight * ratio);
-          const pdfLinkWidth = (canvasWidth / imgWidth) * (imgWidth * ratio);
-          const pdfLinkHeight =
-            (canvasHeight / imgHeight) * (imgHeight * ratio);
+          const pdfX = imgX + (canvasX / imgWidth) * scaledWidth;
+          const pdfY = (canvasY / imgHeight) * scaledHeight;
+          const pdfLinkWidth = (canvasWidth / imgWidth) * scaledWidth;
+          const pdfLinkHeight = (canvasHeight / imgHeight) * scaledHeight;
 
-          pdf.link(pdfX, pdfY, pdfLinkWidth, pdfLinkHeight, { url: href });
+          // Determine which page this link is on
+          let pageNum = 0;
+          let cumulativeHeight = firstPageHeight;
+          let pdfYOnPage = pdfY;
+
+          if (pdfY >= firstPageHeight) {
+            pageNum =
+              1 + Math.floor((pdfY - firstPageHeight) / subsequentPageHeight);
+            pdfYOnPage =
+              topMarginSubsequent +
+              ((pdfY - firstPageHeight) % subsequentPageHeight);
+          }
+
+          linkData.push({
+            href,
+            pdfX,
+            pdfY: pdfYOnPage,
+            width: pdfLinkWidth,
+            height: pdfLinkHeight,
+            page: pageNum,
+          });
         }
       });
+
+      // Add image slices to PDF pages
+      for (let page = 0; page < totalPages; page++) {
+        if (page > 0) {
+          pdf.addPage();
+        }
+
+        // Calculate the portion of the image for this page (in canvas pixels)
+        let sourceYMM, pageHeightMM;
+        if (page === 0) {
+          sourceYMM = 0;
+          pageHeightMM = firstPageHeight;
+        } else {
+          sourceYMM = firstPageHeight + (page - 1) * subsequentPageHeight;
+          pageHeightMM = subsequentPageHeight;
+        }
+
+        const sourceY = sourceYMM / widthRatio;
+        const sourceHeight = Math.min(
+          pageHeightMM / widthRatio,
+          imgHeight - sourceY
+        );
+
+        // Create a temporary canvas for this slice
+        const sliceCanvas = document.createElement("canvas");
+        sliceCanvas.width = imgWidth;
+        sliceCanvas.height = sourceHeight;
+
+        const sliceCtx = sliceCanvas.getContext("2d");
+        if (sliceCtx) {
+          sliceCtx.drawImage(
+            canvas,
+            0,
+            sourceY,
+            imgWidth,
+            sourceHeight,
+            0,
+            0,
+            imgWidth,
+            sourceHeight
+          );
+
+          const sliceData = sliceCanvas.toDataURL("image/jpeg", 0.85);
+          const sliceHeightMM = sourceHeight * widthRatio;
+
+          // Add top margin for pages 2+
+          const imgYPosition = page === 0 ? 0 : topMarginSubsequent;
+
+          pdf.addImage(
+            sliceData,
+            "JPEG",
+            imgX,
+            imgYPosition,
+            scaledWidth,
+            sliceHeightMM,
+            undefined,
+            "FAST"
+          );
+        }
+
+        // Add links for this page
+        linkData
+          .filter((link) => link.page === page)
+          .forEach((link) => {
+            pdf.link(link.pdfX, link.pdfY, link.width, link.height, {
+              url: link.href,
+            });
+          });
+      }
 
       const fileName = watchedData.title || "resume";
 

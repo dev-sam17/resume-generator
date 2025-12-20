@@ -24,12 +24,10 @@ export function CompactLayout({ data }: LayoutProps) {
       <div className="border-b border-gray-800 pb-3 mb-4">
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">
+            <h1 className="text-xl font-bold text-gray-900 mb-1">
               {contact.fullName}
             </h1>
-            <p className="text-base text-gray-700 font-medium">
-              {contact.title}
-            </p>
+            <p className="text-sm text-gray-700 font-medium">{contact.title}</p>
           </div>
           <div className="text-right text-xs text-gray-600 space-y-0.5">
             <div className="flex items-center justify-end gap-1">
@@ -80,7 +78,7 @@ export function CompactLayout({ data }: LayoutProps) {
             (key) => skills[key as keyof typeof skills]?.length > 0
           ) && (
             <div>
-              <h2 className="text-sm font-bold text-gray-900 mb-1 uppercase border-b border-gray-400">
+              <h2 className="text-xs font-bold text-gray-900 mb-1 uppercase border-b border-gray-400">
                 Skills
               </h2>
               <div className="space-y-1 text-xs">
@@ -111,7 +109,7 @@ export function CompactLayout({ data }: LayoutProps) {
           {/* Education */}
           {education.length > 0 && (
             <div>
-              <h2 className="text-sm font-bold text-gray-900 mb-1 uppercase border-b border-gray-400">
+              <h2 className="text-xs font-bold text-gray-900 mb-1 uppercase border-b border-gray-400">
                 Education
               </h2>
               <div className="space-y-2 text-xs">
@@ -131,7 +129,7 @@ export function CompactLayout({ data }: LayoutProps) {
           {/* Certifications */}
           {certifications.length > 0 && (
             <div>
-              <h2 className="text-sm font-bold text-gray-900 mb-1 uppercase border-b border-gray-400">
+              <h2 className="text-xs font-bold text-gray-900 mb-1 uppercase border-b border-gray-400">
                 Certifications
               </h2>
               <div className="space-y-1 text-xs">
@@ -152,7 +150,7 @@ export function CompactLayout({ data }: LayoutProps) {
           {/* Professional Summary */}
           {summary && (
             <div>
-              <h2 className="text-sm font-bold text-gray-900 mb-1 uppercase border-b border-gray-400">
+              <h2 className="text-xs font-bold text-gray-900 mb-1 uppercase border-b border-gray-400">
                 Summary
               </h2>
               <p className="text-gray-700 leading-relaxed text-xs">{summary}</p>
@@ -162,14 +160,14 @@ export function CompactLayout({ data }: LayoutProps) {
           {/* Work Experience */}
           {experience.length > 0 && (
             <div>
-              <h2 className="text-sm font-bold text-gray-900 mb-1 uppercase border-b border-gray-400">
+              <h2 className="text-xs font-bold text-gray-900 mb-1 uppercase border-b border-gray-400">
                 Experience
               </h2>
               <div className="space-y-3">
                 {experience.map((exp, index) => (
                   <div key={index}>
                     <div className="flex justify-between items-baseline mb-0.5">
-                      <h3 className="font-bold text-gray-900 text-sm">
+                      <h3 className="font-bold text-gray-900 text-xs">
                         {exp.title}
                       </h3>
                       <span className="text-xs text-gray-600 whitespace-nowrap">
@@ -199,14 +197,14 @@ export function CompactLayout({ data }: LayoutProps) {
           {/* Projects */}
           {projects.length > 0 && (
             <div>
-              <h2 className="text-sm font-bold text-gray-900 mb-1 uppercase border-b border-gray-400">
+              <h2 className="text-xs font-bold text-gray-900 mb-1 uppercase border-b border-gray-400">
                 Projects
               </h2>
               <div className="space-y-2">
                 {projects.map((project, index) => (
                   <div key={index}>
                     <div className="flex justify-between items-baseline">
-                      <h3 className="font-bold text-gray-900 text-sm">
+                      <h3 className="font-bold text-gray-900 text-xs">
                         {project.name}
                       </h3>
                       {project.link && (

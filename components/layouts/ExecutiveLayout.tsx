@@ -22,10 +22,10 @@ export function ExecutiveLayout({ data }: LayoutProps) {
     <div className="bg-white p-12 shadow-lg max-w-[210mm] mx-auto">
       {/* Header - Executive style with sidebar */}
       <div className="mb-6">
-        <h1 className="text-4xl font-bold text-gray-900 mb-1 border-b-4 border-black pb-2">
+        <h1 className="text-2xl font-bold text-gray-900 mb-1 border-b-4 border-black pb-2">
           {contact.fullName}
         </h1>
-        <p className="text-xl text-gray-700 font-semibold mt-3">
+        <p className="text-base text-gray-700 font-semibold mt-3">
           {contact.title}
         </p>
       </div>
@@ -93,7 +93,7 @@ export function ExecutiveLayout({ data }: LayoutProps) {
           <h2 className="text-sm font-bold text-gray-900 mb-2 uppercase tracking-wider">
             Executive Summary
           </h2>
-          <p className="text-gray-700 leading-relaxed">{summary}</p>
+          <p className="text-gray-700 leading-relaxed text-sm">{summary}</p>
         </div>
       )}
 
@@ -108,10 +108,12 @@ export function ExecutiveLayout({ data }: LayoutProps) {
               <div key={index}>
                 <div className="flex justify-between items-start mb-2">
                   <div>
-                    <h3 className="text-lg font-bold text-gray-900">
+                    <h3 className="text-sm font-bold text-gray-900">
                       {exp.title}
                     </h3>
-                    <p className="text-gray-700 font-semibold">{exp.company}</p>
+                    <p className="text-gray-700 font-semibold text-sm">
+                      {exp.company}
+                    </p>
                     <p className="text-sm text-gray-600">{exp.location}</p>
                   </div>
                   <div className="text-right">
@@ -120,7 +122,7 @@ export function ExecutiveLayout({ data }: LayoutProps) {
                     </span>
                   </div>
                 </div>
-                <ul className="list-none space-y-1 text-gray-700">
+                <ul className="list-none space-y-1 text-gray-700 text-sm">
                   {exp.achievements.map((achievement, i) => (
                     <li
                       key={i}
@@ -152,7 +154,7 @@ export function ExecutiveLayout({ data }: LayoutProps) {
             {projects.map((project, index) => (
               <div key={index}>
                 <div className="flex justify-between items-start mb-1">
-                  <h3 className="text-base font-bold text-gray-900">
+                  <h3 className="text-sm font-bold text-gray-900">
                     {project.name}
                   </h3>
                   {project.link && (
@@ -169,7 +171,7 @@ export function ExecutiveLayout({ data }: LayoutProps) {
                 <p className="text-sm text-gray-600 font-semibold mb-1">
                   {project.role}
                 </p>
-                <p className="text-gray-700">{project.description}</p>
+                <p className="text-gray-700 text-sm">{project.description}</p>
                 {project.technologies && project.technologies.length > 0 && (
                   <p className="text-sm text-gray-600 mt-1">
                     <span className="font-semibold">Technologies: </span>
@@ -202,10 +204,12 @@ export function ExecutiveLayout({ data }: LayoutProps) {
 
               return (
                 <div key={category}>
-                  <span className="font-bold text-gray-900">
+                  <span className="font-bold text-gray-900 text-sm">
                     {categoryName}:{" "}
                   </span>
-                  <span className="text-gray-700">{skillList.join(", ")}</span>
+                  <span className="text-gray-700 text-sm">
+                    {skillList.join(", ")}
+                  </span>
                 </div>
               );
             })}
@@ -223,8 +227,10 @@ export function ExecutiveLayout({ data }: LayoutProps) {
             <div className="space-y-3">
               {education.map((edu, index) => (
                 <div key={index}>
-                  <h3 className="font-bold text-gray-900">{edu.degree}</h3>
-                  <p className="text-gray-700">{edu.institution}</p>
+                  <h3 className="font-bold text-gray-900 text-sm">
+                    {edu.degree}
+                  </h3>
+                  <p className="text-gray-700 text-sm">{edu.institution}</p>
                   <p className="text-sm text-gray-600">{edu.year}</p>
                 </div>
               ))}
@@ -241,8 +247,10 @@ export function ExecutiveLayout({ data }: LayoutProps) {
             <div className="space-y-3">
               {certifications.map((cert, index) => (
                 <div key={index}>
-                  <h3 className="font-bold text-gray-900">{cert.name}</h3>
-                  <p className="text-gray-700">{cert.authority}</p>
+                  <h3 className="font-bold text-gray-900 text-sm">
+                    {cert.name}
+                  </h3>
+                  <p className="text-gray-700 text-sm">{cert.authority}</p>
                   <p className="text-sm text-gray-600">{cert.date}</p>
                 </div>
               ))}

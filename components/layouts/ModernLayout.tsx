@@ -22,10 +22,10 @@ export function ModernLayout({ data }: LayoutProps) {
     <div className="bg-white p-12 shadow-lg max-w-[210mm] mx-auto">
       {/* Header - Left aligned with accent */}
       <div className="border-l-4 border-blue-600 pl-4 pb-4 mb-6">
-        <h1 className="text-4xl font-bold text-gray-900 mb-1">
+        <h1 className="text-2xl font-bold text-gray-900 mb-1">
           {contact.fullName}
         </h1>
-        <p className="text-xl text-blue-600 mb-3 font-medium">
+        <p className="text-base text-blue-600 mb-3 font-medium">
           {contact.title}
         </p>
 
@@ -71,12 +71,12 @@ export function ModernLayout({ data }: LayoutProps) {
       {/* Professional Summary */}
       {summary && (
         <div className="mb-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-2 flex items-center">
+          <h2 className="text-base font-bold text-gray-900 mb-2 flex items-center">
             <span className="bg-blue-600 text-white px-3 py-1 text-sm uppercase tracking-wide">
               Professional Summary
             </span>
           </h2>
-          <p className="text-gray-700 leading-relaxed">{summary}</p>
+          <p className="text-gray-700 leading-relaxed text-sm">{summary}</p>
         </div>
       )}
 
@@ -85,7 +85,7 @@ export function ModernLayout({ data }: LayoutProps) {
         (key) => skills[key as keyof typeof skills]?.length > 0
       ) && (
         <div className="mb-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-2 flex items-center">
+          <h2 className="text-base font-bold text-gray-900 mb-2 flex items-center">
             <span className="bg-blue-600 text-white px-3 py-1 text-sm uppercase tracking-wide">
               Technical Skills
             </span>
@@ -102,10 +102,12 @@ export function ModernLayout({ data }: LayoutProps) {
 
               return (
                 <div key={category}>
-                  <span className="font-semibold text-gray-900">
+                  <span className="font-semibold text-gray-900 text-sm">
                     {categoryName}:{" "}
                   </span>
-                  <span className="text-gray-700">{skillList.join(", ")}</span>
+                  <span className="text-gray-700 text-sm">
+                    {skillList.join(", ")}
+                  </span>
                 </div>
               );
             })}
@@ -116,7 +118,7 @@ export function ModernLayout({ data }: LayoutProps) {
       {/* Work Experience */}
       {experience.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-2 flex items-center">
+          <h2 className="text-base font-bold text-gray-900 mb-2 flex items-center">
             <span className="bg-blue-600 text-white px-3 py-1 text-sm uppercase tracking-wide">
               Work Experience
             </span>
@@ -126,10 +128,10 @@ export function ModernLayout({ data }: LayoutProps) {
               <div key={index} className="border-l-2 border-blue-200 pl-4">
                 <div className="flex justify-between items-start mb-1">
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900">
+                    <h3 className="text-sm font-semibold text-gray-900">
                       {exp.title}
                     </h3>
-                    <p className="text-gray-700 font-medium">
+                    <p className="text-gray-700 font-medium text-sm">
                       {exp.company} • {exp.location}
                     </p>
                   </div>
@@ -137,7 +139,7 @@ export function ModernLayout({ data }: LayoutProps) {
                     {exp.startDate} - {exp.endDate}
                   </span>
                 </div>
-                <ul className="list-disc list-inside space-y-1 text-gray-700 ml-2">
+                <ul className="list-disc list-inside space-y-1 text-gray-700 ml-2 text-sm">
                   {exp.achievements.map((achievement, i) => (
                     <li key={i}>{achievement}</li>
                   ))}
@@ -157,7 +159,7 @@ export function ModernLayout({ data }: LayoutProps) {
       {/* Projects */}
       {projects.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-2 flex items-center">
+          <h2 className="text-base font-bold text-gray-900 mb-2 flex items-center">
             <span className="bg-blue-600 text-white px-3 py-1 text-sm uppercase tracking-wide">
               Projects
             </span>
@@ -166,7 +168,7 @@ export function ModernLayout({ data }: LayoutProps) {
             {projects.map((project, index) => (
               <div key={index} className="border-l-2 border-blue-200 pl-4">
                 <div className="flex justify-between items-start">
-                  <h3 className="text-lg font-semibold text-gray-900">
+                  <h3 className="text-sm font-semibold text-gray-900">
                     {project.name}
                   </h3>
                   {project.link && (
@@ -181,7 +183,7 @@ export function ModernLayout({ data }: LayoutProps) {
                   )}
                 </div>
                 <p className="text-sm text-gray-600 mb-1">{project.role}</p>
-                <p className="text-gray-700">{project.description}</p>
+                <p className="text-gray-700 text-sm">{project.description}</p>
                 {project.technologies && project.technologies.length > 0 && (
                   <p className="text-sm text-gray-600 mt-1">
                     <span className="font-semibold">Technologies: </span>
@@ -197,7 +199,7 @@ export function ModernLayout({ data }: LayoutProps) {
       {/* Education */}
       {education.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-2 flex items-center">
+          <h2 className="text-base font-bold text-gray-900 mb-2 flex items-center">
             <span className="bg-blue-600 text-white px-3 py-1 text-sm uppercase tracking-wide">
               Education
             </span>
@@ -206,10 +208,12 @@ export function ModernLayout({ data }: LayoutProps) {
             {education.map((edu, index) => (
               <div key={index} className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-semibold text-gray-900">{edu.degree}</h3>
-                  <p className="text-gray-700">{edu.institution}</p>
+                  <h3 className="font-semibold text-gray-900 text-sm">
+                    {edu.degree}
+                  </h3>
+                  <p className="text-gray-700 text-sm">{edu.institution}</p>
                 </div>
-                <span className="text-gray-600">{edu.year}</span>
+                <span className="text-gray-600 text-sm">{edu.year}</span>
               </div>
             ))}
           </div>
@@ -219,7 +223,7 @@ export function ModernLayout({ data }: LayoutProps) {
       {/* Certifications */}
       {certifications.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-2 flex items-center">
+          <h2 className="text-base font-bold text-gray-900 mb-2 flex items-center">
             <span className="bg-blue-600 text-white px-3 py-1 text-sm uppercase tracking-wide">
               Certifications
             </span>
@@ -228,10 +232,12 @@ export function ModernLayout({ data }: LayoutProps) {
             {certifications.map((cert, index) => (
               <div key={index} className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-semibold text-gray-900">{cert.name}</h3>
-                  <p className="text-gray-700">{cert.authority}</p>
+                  <h3 className="font-semibold text-gray-900 text-sm">
+                    {cert.name}
+                  </h3>
+                  <p className="text-gray-700 text-sm">{cert.authority}</p>
                 </div>
-                <span className="text-gray-600">{cert.date}</span>
+                <span className="text-gray-600 text-sm">{cert.date}</span>
               </div>
             ))}
           </div>
