@@ -26,9 +26,9 @@ export default function Home() {
             <Button
               onClick={handleSignIn}
               size="sm"
-              className="bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all text-xs sm:text-sm"
+              className="rounded-4xl w-full p-4 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all text-xs sm:text-sm"
             >
-              Sign In
+              SIGN IN
             </Button>
           </div>
         </div>
@@ -52,16 +52,12 @@ export default function Home() {
             </span>
           </h1>
 
-          <p className="text-base sm:text-lg lg:text-xl text-gray-600 dark:text-gray-300 mb-8 sm:mb-12 max-w-2xl mx-auto px-4">
-            Build tailored resumes for different job roles. Export as PDF, share
-            via cloud links, and manage all your professional profiles in one
-            place.
-          </p>
+          <p className="text-base sm:text-lg lg:text-xl text-gray-600 dark:text-gray-300 mb-8 sm:mb-12 max-w-2xl mx-auto px-4"></p>
 
           <Button
             onClick={handleSignIn}
             size="lg"
-            className="text-sm sm:text-base lg:text-lg px-6 sm:px-8 py-5 sm:py-6 w-full sm:w-auto"
+            className="rounded-4xl text-sm sm:text-base lg:text-lg px-8 sm:px-10 py-6 sm:py-7 w-full sm:w-auto border-2 border-blue-500 dark:border-purple-500 shadow-2xl hover:shadow-blue-500/50 dark:hover:shadow-purple-500/50 transition-all duration-300 hover:scale-105 animate-pulse hover:animate-none bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
           >
             Create Your First Resume
           </Button>
