@@ -249,12 +249,63 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
         }
       });
 
+      // Convert SVG icons to images for better rendering
+      const svgElements = element.querySelectorAll("svg");
+      const svgReplacements: Array<{
+        svg: SVGElement;
+        placeholder: HTMLElement;
+        parent: HTMLElement;
+      }> = [];
+
+      svgElements.forEach((svg) => {
+        const parent = svg.parentElement;
+        if (parent) {
+          // Create a placeholder div with the same dimensions
+          const placeholder = document.createElement("div");
+          placeholder.style.width = `${svg.clientWidth}px`;
+          placeholder.style.height = `${svg.clientHeight}px`;
+          placeholder.style.display = "inline-block";
+
+          // Serialize SVG to data URL
+          const serializer = new XMLSerializer();
+          const svgString = serializer.serializeToString(svg);
+          const svgBlob = new Blob([svgString], { type: "image/svg+xml" });
+          const url = URL.createObjectURL(svgBlob);
+
+          // Create an img element
+          const img = document.createElement("img");
+          img.src = url;
+          img.style.width = `${svg.clientWidth}px`;
+          img.style.height = `${svg.clientHeight}px`;
+          img.style.display = "inline-block";
+          img.style.verticalAlign = "middle";
+
+          placeholder.appendChild(img);
+
+          svgReplacements.push({
+            svg: svg as SVGElement,
+            placeholder,
+            parent: parent as HTMLElement,
+          });
+
+          parent.replaceChild(placeholder, svg);
+        }
+      });
+
+      // Wait for images to load
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
       // Now run html2canvas with RGB colors already applied
       const canvas = await html2canvas(element, {
-        scale: 2,
+        scale: 4,
         useCORS: true,
         logging: false,
         backgroundColor: "#ffffff",
+      });
+
+      // Restore SVG elements
+      svgReplacements.forEach(({ svg, placeholder, parent }) => {
+        parent.replaceChild(svg, placeholder);
       });
 
       // Restore original styles
@@ -273,16 +324,14 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
         }
       });
 
-      console.log({ canvas });
-
-      const imgData = canvas.toDataURL("image/png");
+      // Use JPEG with compression for smaller file size
+      const imgData = canvas.toDataURL("image/jpeg", 0.85);
       const pdf = new jsPDF({
         orientation: "portrait",
         unit: "mm",
         format: "a4",
+        compress: true,
       });
-
-      console.log({ imgData });
 
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
@@ -294,16 +343,48 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
 
       pdf.addImage(
         imgData,
-        "PNG",
+        "JPEG",
         imgX,
         imgY,
         imgWidth * ratio,
-        imgHeight * ratio
+        imgHeight * ratio,
+        undefined,
+        "FAST"
       );
+
+      // Extract all hyperlinks and add them to PDF
+      const links = element.querySelectorAll("a[href]");
+      const elementRect = element.getBoundingClientRect();
+      const canvasScale = 4; // Must match html2canvas scale
+
+      links.forEach((link) => {
+        const href = link.getAttribute("href");
+        if (href && (href.startsWith("http") || href.startsWith("mailto:"))) {
+          const linkRect = link.getBoundingClientRect();
+
+          // Position relative to element (in pixels)
+          const relX = linkRect.left - elementRect.left;
+          const relY = linkRect.top - elementRect.top;
+
+          // Convert from element pixels to canvas pixels (accounting for scale)
+          const canvasX = relX * canvasScale;
+          const canvasY = relY * canvasScale;
+          const canvasWidth = linkRect.width * canvasScale;
+          const canvasHeight = linkRect.height * canvasScale;
+
+          // Convert from canvas pixels to PDF mm
+          const pdfX = imgX + (canvasX / imgWidth) * (imgWidth * ratio);
+          const pdfY = imgY + (canvasY / imgHeight) * (imgHeight * ratio);
+          const pdfLinkWidth = (canvasWidth / imgWidth) * (imgWidth * ratio);
+          const pdfLinkHeight =
+            (canvasHeight / imgHeight) * (imgHeight * ratio);
+
+          pdf.link(pdfX, pdfY, pdfLinkWidth, pdfLinkHeight, { url: href });
+        }
+      });
 
       const fileName = watchedData.title || "resume";
 
-      console.log({ fileName });
       pdf.save(`${fileName}.pdf`);
       showToast("PDF downloaded successfully!", "success");
     } catch (error) {
