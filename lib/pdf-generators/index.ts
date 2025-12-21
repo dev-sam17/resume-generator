@@ -1,11 +1,11 @@
 import { ResumeData } from "@/types/resume";
 import { PDFBuilder } from "../pdf-utils";
-import { generateClassicLayoutPDFEnhanced } from "./ClassicLayoutPDF-Enhanced";
-import { generateModernLayoutPDFEnhanced } from "./ModernLayoutPDF-Enhanced";
-import { generateProfessionalLayoutPDFEnhanced } from "./ProfessionalLayoutPDF-Enhanced";
-import { generateMinimalLayoutPDFEnhanced } from "./MinimalLayoutPDF-Enhanced";
-import { generateExecutiveLayoutPDFEnhanced } from "./ExecutiveLayoutPDF-Enhanced";
-import { generateCompactLayoutPDFEnhanced } from "./CompactLayoutPDF-Enhanced";
+import { generateClassicLayoutPDF } from "./ClassicLayoutPDF";
+import { generateModernLayoutPDF } from "./ModernLayoutPDF";
+import { generateProfessionalLayoutPDF } from "./ProfessionalLayoutPDF";
+import { generateMinimalLayoutPDF } from "./MinimalLayoutPDF";
+import { generateExecutiveLayoutPDF } from "./ExecutiveLayoutPDF";
+import { generateCompactLayoutPDF } from "./CompactLayoutPDF";
 
 export type LayoutType =
   | "classic"
@@ -18,27 +18,27 @@ export type LayoutType =
 export function generatePDF(data: ResumeData, layout: LayoutType): PDFBuilder {
   switch (layout) {
     case "classic":
-      return generateClassicLayoutPDFEnhanced(data);
+      return generateClassicLayoutPDF(data);
     case "modern":
-      return generateModernLayoutPDFEnhanced(data);
+      return generateModernLayoutPDF(data);
     case "professional":
-      return generateProfessionalLayoutPDFEnhanced(data);
+      return generateProfessionalLayoutPDF(data);
     case "minimal":
-      return generateMinimalLayoutPDFEnhanced(data);
+      return generateMinimalLayoutPDF(data);
     case "executive":
-      return generateExecutiveLayoutPDFEnhanced(data);
+      return generateExecutiveLayoutPDF(data);
     case "compact":
-      return generateCompactLayoutPDFEnhanced(data);
+      return generateCompactLayoutPDF(data);
     default:
-      return generateClassicLayoutPDFEnhanced(data);
+      return generateClassicLayoutPDF(data);
   }
 }
 
 export {
-  generateClassicLayoutPDFEnhanced,
-  generateModernLayoutPDFEnhanced,
-  generateProfessionalLayoutPDFEnhanced,
-  generateMinimalLayoutPDFEnhanced,
-  generateExecutiveLayoutPDFEnhanced,
-  generateCompactLayoutPDFEnhanced,
+  generateClassicLayoutPDF,
+  generateModernLayoutPDF,
+  generateProfessionalLayoutPDF,
+  generateMinimalLayoutPDF,
+  generateExecutiveLayoutPDF,
+  generateCompactLayoutPDF,
 };

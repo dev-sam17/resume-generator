@@ -1,7 +1,7 @@
 import { PDFBuilder } from "../pdf-utils";
 import { ResumeData } from "@/types/resume";
 
-export function generateModernLayoutPDFEnhanced(data: ResumeData): PDFBuilder {
+export function generateProfessionalLayoutPDF(data: ResumeData): PDFBuilder {
   const pdf = new PDFBuilder("portrait");
   const {
     contact,
@@ -13,151 +13,163 @@ export function generateModernLayoutPDFEnhanced(data: ResumeData): PDFBuilder {
     certifications,
   } = data;
 
-  // Colors - matching HTML Modern layout
+  // Colors - matching HTML Professional layout
   const primaryColor: [number, number, number] = [17, 24, 39]; // Gray-900
-  const secondaryColor: [number, number, number] = [75, 85, 99]; // Gray-600
+  const secondaryColor: [number, number, number] = [55, 65, 81]; // Gray-700
   const textColor: [number, number, number] = [55, 65, 81]; // Gray-700
-  const accentColor: [number, number, number] = [37, 99, 235]; // Blue-600
-  const white: [number, number, number] = [255, 255, 255];
+  const accentColor: [number, number, number] = [29, 78, 216]; // Blue-700
+  const grayBg: [number, number, number] = [243, 244, 246]; // Gray-100
+  const iconColor: [number, number, number] = [75, 85, 99]; // Gray-600
 
-  // Header - Left aligned with blue left border (border-l-4 border-blue-600)
-  const headerStartY = pdf.getCurrentY();
-
-  // Draw left border
-  pdf.addVerticalLine(20, headerStartY, headerStartY + 35, 3, accentColor);
+  // Header with gray background (bg-gray-100)
+  const headerHeight = 50;
+  pdf.addFilledRect(
+    0,
+    0,
+    pdf.getPDF().internal.pageSize.getWidth(),
+    headerHeight,
+    grayBg
+  );
 
   // Name
   pdf.setFont("helvetica", "bold", 18); // text-2xl
   pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-  pdf.getPDF().text(contact.fullName, 26, pdf.getCurrentY());
-  pdf.addSpace(3);
+  pdf.getPDF().text(contact.fullName, 20, 18);
 
-  // Title with blue color
-  pdf.setFont("helvetica", "bold", 12); // text-base font-medium
-  pdf.setTextColor(accentColor[0], accentColor[1], accentColor[2]);
-  pdf.getPDF().text(contact.title, 26, pdf.getCurrentY());
-  pdf.addSpace(5);
+  // Title
+  pdf.setFont("helvetica", "normal", 12); // text-base
+  pdf.setTextColor(textColor[0], textColor[1], textColor[2]);
+  pdf.getPDF().text(contact.title, 20, 25);
 
-  // Contact info (text-sm text-gray-600)
-  pdf.setFont("helvetica", "normal", 10.5);
-  pdf.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
+  // Contact info in grid layout (grid-cols-2)
+  pdf.setFont("helvetica", "normal", 10.5); // text-sm
+  pdf.setTextColor(textColor[0], textColor[1], textColor[2]);
 
-  const contactLine = `${contact.email}    ${contact.phone}    ${contact.location}`;
-  pdf.getPDF().text(contactLine, 26, pdf.getCurrentY());
-  pdf.addSpace(3);
+  const leftColX = 20;
+  const rightColX = 20 + pdf.getContentWidth() / 2;
+  let contactY = 33;
 
-  // Social links (text-sm text-blue-600)
-  if (contact.linkedin || contact.github || contact.portfolio) {
-    const socialItems: Array<{ text: string; link: string }> = [];
-    if (contact.linkedin)
-      socialItems.push({ text: "LinkedIn", link: contact.linkedin });
-    if (contact.github)
-      socialItems.push({ text: "GitHub", link: contact.github });
-    if (contact.portfolio)
-      socialItems.push({ text: "Portfolio", link: contact.portfolio });
+  // Left column
+  pdf.getPDF().text(`✉ ${contact.email}`, leftColX, contactY);
+  contactY += 4;
+  pdf.getPDF().text(`☎ ${contact.phone}`, leftColX, contactY);
 
-    pdf.setFont("helvetica", "normal", 10.5);
+  // Right column
+  contactY = 33;
+  pdf.getPDF().text(`⌂ ${contact.location}`, rightColX, contactY);
+  contactY += 4;
+
+  if (contact.linkedin) {
     pdf.setTextColor(accentColor[0], accentColor[1], accentColor[2]);
-
-    let socialX = 26;
-    socialItems.forEach((item, index) => {
-      pdf
-        .getPDF()
-        .textWithLink(item.text, socialX, pdf.getCurrentY(), {
-          url: item.link,
-        });
-      socialX += pdf.getPDF().getTextWidth(item.text);
-      if (index < socialItems.length - 1) {
-        pdf.getPDF().text("    ", socialX, pdf.getCurrentY());
-        socialX += pdf.getPDF().getTextWidth("    ");
-      }
+    pdf.getPDF().textWithLink("LinkedIn", rightColX + 10, contactY, {
+      url: contact.linkedin,
     });
-    pdf.addSpace(3);
+    pdf.setTextColor(textColor[0], textColor[1], textColor[2]);
+    pdf.getPDF().text("▶ ", rightColX, contactY);
   }
 
-  pdf.addSpace(6);
+  pdf.setCurrentY(headerHeight + 8);
 
-  // Professional Summary with blue badge heading
+  // Professional Summary (border-b-2 border-gray-900)
   if (summary) {
-    // Blue badge (bg-blue-600 text-white px-3 py-1 text-sm uppercase)
-    const badgeY = pdf.getCurrentY();
-    const badgeText = "PROFESSIONAL SUMMARY";
-    pdf.setFont("helvetica", "bold", 10.5);
-    const badgeWidth = pdf.getPDF().getTextWidth(badgeText) + 6;
+    pdf.setFont("helvetica", "bold", 12); // text-base
+    pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+    pdf.getPDF().text("PROFESSIONAL SUMMARY", 20, pdf.getCurrentY());
+    pdf.addSpace(2);
+    pdf.addHorizontalLine(undefined, 1.5, primaryColor); // border-b-2
+    pdf.addSpace(3);
 
-    pdf.addFilledRect(20, badgeY - 4, badgeWidth, 6, accentColor);
-    pdf.setTextColor(white[0], white[1], white[2]);
-    pdf.getPDF().text(badgeText, 23, badgeY);
-    pdf.addSpace(5);
-
-    // Summary text (text-sm text-gray-700)
-    pdf.setFont("helvetica", "normal", 10.5);
+    pdf.setFont("helvetica", "normal", 10.5); // text-sm
     pdf.setTextColor(textColor[0], textColor[1], textColor[2]);
     pdf.addText(summary, 20, 10.5, { lineHeight: 1.5 });
     pdf.addSpace(6);
   }
 
-  // Technical Skills with blue badge
+  // Core Competencies (border-b-2 border-gray-900, grid-cols-2)
   if (
     Object.keys(skills).some(
       (key) => skills[key as keyof typeof skills]?.length > 0
     )
   ) {
-    const badgeY = pdf.getCurrentY();
-    const badgeText = "TECHNICAL SKILLS";
-    pdf.setFont("helvetica", "bold", 10.5);
-    const badgeWidth = pdf.getPDF().getTextWidth(badgeText) + 6;
+    pdf.setFont("helvetica", "bold", 12);
+    pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+    pdf.getPDF().text("CORE COMPETENCIES", 20, pdf.getCurrentY());
+    pdf.addSpace(2);
+    pdf.addHorizontalLine(undefined, 1.5, primaryColor);
+    pdf.addSpace(3);
 
-    pdf.addFilledRect(20, badgeY - 4, badgeWidth, 6, accentColor);
-    pdf.setTextColor(white[0], white[1], white[2]);
-    pdf.getPDF().text(badgeText, 23, badgeY);
-    pdf.addSpace(5);
+    const skillEntries = Object.entries(skills).filter(
+      ([_, skillList]) => Array.isArray(skillList) && skillList.length > 0
+    );
 
-    Object.entries(skills).forEach(([category, skillList]) => {
-      if (!Array.isArray(skillList) || skillList.length === 0) return;
+    // Two-column layout for skills
+    const midPoint = Math.ceil(skillEntries.length / 2);
+    const leftSkills = skillEntries.slice(0, midPoint);
+    const rightSkills = skillEntries.slice(midPoint);
 
-      const categoryName = category
-        .replace(/([A-Z])/g, " $1")
-        .replace(/^./, (str: string) => str.toUpperCase())
-        .trim();
+    pdf.addTwoColumns(
+      () => {
+        leftSkills.forEach(([category, skillList]) => {
+          const categoryName = category
+            .replace(/([A-Z])/g, " $1")
+            .replace(/^./, (str: string) => str.toUpperCase())
+            .trim();
 
-      // Category in bold
-      pdf.setFont("helvetica", "bold", 10.5);
-      pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-      const labelWidth = pdf.getPDF().getTextWidth(categoryName + ": ");
-      pdf.getPDF().text(categoryName + ": ", 20, pdf.getCurrentY());
+          pdf.setFont("helvetica", "bold", 10.5);
+          pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+          pdf.getPDF().text(categoryName + ":", 20, pdf.getCurrentY());
+          pdf.addSpace(2);
 
-      // Skills
-      pdf.setFont("helvetica", "normal", 10.5);
-      pdf.setTextColor(textColor[0], textColor[1], textColor[2]);
-      pdf.addText(skillList.join(", "), 20 + labelWidth, 10.5, {
-        maxWidth: pdf.getContentWidth() - labelWidth,
-      });
-      pdf.addSpace(3);
-    });
+          pdf.setFont("helvetica", "normal", 10.5);
+          pdf.setTextColor(textColor[0], textColor[1], textColor[2]);
+          pdf.addText((skillList as string[]).join(", "), 20, 10.5, {
+            maxWidth: (pdf.getContentWidth() - 10) / 2,
+          });
+          pdf.addSpace(2);
+        });
+      },
+      () => {
+        rightSkills.forEach(([category, skillList]) => {
+          const categoryName = category
+            .replace(/([A-Z])/g, " $1")
+            .replace(/^./, (str: string) => str.toUpperCase())
+            .trim();
+
+          const startX = 20 + (pdf.getContentWidth() + 10) / 2;
+
+          pdf.setFont("helvetica", "bold", 10.5);
+          pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+          pdf.getPDF().text(categoryName + ":", startX, pdf.getCurrentY());
+          pdf.addSpace(2);
+
+          pdf.setFont("helvetica", "normal", 10.5);
+          pdf.setTextColor(textColor[0], textColor[1], textColor[2]);
+          pdf.addText((skillList as string[]).join(", "), startX, 10.5, {
+            maxWidth: (pdf.getContentWidth() - 10) / 2,
+          });
+          pdf.addSpace(2);
+        });
+      },
+      10
+    );
 
     pdf.addSpace(4);
   }
 
-  // Professional Experience with blue badge
+  // Professional Experience
   if (experience.length > 0) {
-    const badgeY = pdf.getCurrentY();
-    const badgeText = "PROFESSIONAL EXPERIENCE";
-    pdf.setFont("helvetica", "bold", 10.5);
-    const badgeWidth = pdf.getPDF().getTextWidth(badgeText) + 6;
-
-    pdf.addFilledRect(20, badgeY - 4, badgeWidth, 6, accentColor);
-    pdf.setTextColor(white[0], white[1], white[2]);
-    pdf.getPDF().text(badgeText, 23, badgeY);
-    pdf.addSpace(5);
+    pdf.setFont("helvetica", "bold", 12);
+    pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+    pdf.getPDF().text("PROFESSIONAL EXPERIENCE", 20, pdf.getCurrentY());
+    pdf.addSpace(2);
+    pdf.addHorizontalLine(undefined, 1.5, primaryColor);
+    pdf.addSpace(3);
 
     experience.forEach((exp, index) => {
-      // Job title
       pdf.setFont("helvetica", "bold", 12);
       pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
       pdf.getPDF().text(exp.title, 20, pdf.getCurrentY());
 
-      // Date (right-aligned)
       pdf.setFont("helvetica", "normal", 10);
       pdf.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
       const dateText = `${exp.startDate} - ${exp.endDate}`;
@@ -171,15 +183,13 @@ export function generateModernLayoutPDFEnhanced(data: ResumeData): PDFBuilder {
         );
       pdf.addSpace(4);
 
-      // Company and location
-      pdf.setFont("helvetica", "normal", 10.5);
+      pdf.setFont("helvetica", "italic", 10.5);
       pdf.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
       pdf
         .getPDF()
         .text(`${exp.company}, ${exp.location}`, 20, pdf.getCurrentY());
       pdf.addSpace(3);
 
-      // Achievements with bullets
       pdf.setFont("helvetica", "normal", 10.5);
       pdf.setTextColor(textColor[0], textColor[1], textColor[2]);
 
@@ -202,7 +212,6 @@ export function generateModernLayoutPDFEnhanced(data: ResumeData): PDFBuilder {
         });
       });
 
-      // Technologies
       if (exp.technologies && exp.technologies.length > 0) {
         pdf.addSpace(2);
         pdf.setFont("helvetica", "italic", 9);
@@ -211,8 +220,7 @@ export function generateModernLayoutPDFEnhanced(data: ResumeData): PDFBuilder {
           secondaryColor[1],
           secondaryColor[2]
         );
-        const techText = "Tech: " + exp.technologies.join(", ");
-        pdf.addText(techText, 22, 9, { maxWidth: pdf.getContentWidth() - 2 });
+        pdf.addText("Technologies: " + exp.technologies.join(", "), 22, 9);
       }
 
       if (index < experience.length - 1) {
@@ -223,29 +231,24 @@ export function generateModernLayoutPDFEnhanced(data: ResumeData): PDFBuilder {
     pdf.addSpace(4);
   }
 
-  // Projects with blue badge
+  // Projects
   if (projects.length > 0) {
-    const badgeY = pdf.getCurrentY();
-    const badgeText = "PROJECTS";
-    pdf.setFont("helvetica", "bold", 10.5);
-    const badgeWidth = pdf.getPDF().getTextWidth(badgeText) + 6;
-
-    pdf.addFilledRect(20, badgeY - 4, badgeWidth, 6, accentColor);
-    pdf.setTextColor(white[0], white[1], white[2]);
-    pdf.getPDF().text(badgeText, 23, badgeY);
-    pdf.addSpace(5);
+    pdf.setFont("helvetica", "bold", 12);
+    pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+    pdf.getPDF().text("PROJECTS", 20, pdf.getCurrentY());
+    pdf.addSpace(2);
+    pdf.addHorizontalLine(undefined, 1.5, primaryColor);
+    pdf.addSpace(3);
 
     projects.forEach((project, index) => {
-      // Project name
       pdf.setFont("helvetica", "bold", 12);
       pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
       pdf.getPDF().text(project.name, 20, pdf.getCurrentY());
 
-      // Link
       if (project.link) {
         pdf.setFont("helvetica", "normal", 10);
         pdf.setTextColor(accentColor[0], accentColor[1], accentColor[2]);
-        const linkText = "View Project";
+        const linkText = "View";
         const linkWidth = pdf.getPDF().getTextWidth(linkText);
         pdf
           .getPDF()
@@ -258,28 +261,24 @@ export function generateModernLayoutPDFEnhanced(data: ResumeData): PDFBuilder {
       }
       pdf.addSpace(4);
 
-      // Role
       pdf.setFont("helvetica", "italic", 10);
       pdf.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
       pdf.getPDF().text(project.role, 20, pdf.getCurrentY());
       pdf.addSpace(3);
 
-      // Description
       pdf.setFont("helvetica", "normal", 10.5);
       pdf.setTextColor(textColor[0], textColor[1], textColor[2]);
       pdf.addText(project.description, 20, 10.5, { lineHeight: 1.4 });
-      pdf.addSpace(2);
 
-      // Technologies
       if (project.technologies && project.technologies.length > 0) {
+        pdf.addSpace(2);
         pdf.setFont("helvetica", "italic", 9);
         pdf.setTextColor(
           secondaryColor[0],
           secondaryColor[1],
           secondaryColor[2]
         );
-        const techText = "Tech: " + project.technologies.join(", ");
-        pdf.addText(techText, 20, 9, { maxWidth: pdf.getContentWidth() });
+        pdf.addText("Tech: " + project.technologies.join(", "), 20, 9);
       }
 
       if (index < projects.length - 1) {
@@ -290,7 +289,7 @@ export function generateModernLayoutPDFEnhanced(data: ResumeData): PDFBuilder {
     pdf.addSpace(4);
   }
 
-  // Education and Certifications in two columns
+  // Education and Certifications
   const hasEducation = education.length > 0;
   const hasCertifications = certifications.length > 0;
 
@@ -298,15 +297,16 @@ export function generateModernLayoutPDFEnhanced(data: ResumeData): PDFBuilder {
     pdf.addTwoColumns(
       () => {
         if (hasEducation) {
-          const badgeY = pdf.getCurrentY();
-          const badgeText = "EDUCATION";
-          pdf.setFont("helvetica", "bold", 10.5);
-          const badgeWidth = pdf.getPDF().getTextWidth(badgeText) + 6;
-
-          pdf.addFilledRect(20, badgeY - 4, badgeWidth, 6, accentColor);
-          pdf.setTextColor(white[0], white[1], white[2]);
-          pdf.getPDF().text(badgeText, 23, badgeY);
-          pdf.addSpace(5);
+          pdf.setFont("helvetica", "bold", 12);
+          pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+          pdf.getPDF().text("EDUCATION", 20, pdf.getCurrentY());
+          pdf.addSpace(2);
+          pdf.addHorizontalLine(
+            (pdf.getContentWidth() - 10) / 2,
+            1.5,
+            primaryColor
+          );
+          pdf.addSpace(3);
 
           education.forEach((edu, index) => {
             pdf.setFont("helvetica", "bold", 11);
@@ -333,15 +333,16 @@ export function generateModernLayoutPDFEnhanced(data: ResumeData): PDFBuilder {
         if (hasCertifications) {
           const startX = 20 + (pdf.getContentWidth() + 10) / 2;
 
-          const badgeY = pdf.getCurrentY();
-          const badgeText = "CERTIFICATIONS";
-          pdf.setFont("helvetica", "bold", 10.5);
-          const badgeWidth = pdf.getPDF().getTextWidth(badgeText) + 6;
-
-          pdf.addFilledRect(startX, badgeY - 4, badgeWidth, 6, accentColor);
-          pdf.setTextColor(white[0], white[1], white[2]);
-          pdf.getPDF().text(badgeText, startX + 3, badgeY);
-          pdf.addSpace(5);
+          pdf.setFont("helvetica", "bold", 12);
+          pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+          pdf.getPDF().text("CERTIFICATIONS", startX, pdf.getCurrentY());
+          pdf.addSpace(2);
+          pdf.addHorizontalLine(
+            (pdf.getContentWidth() - 10) / 2,
+            1.5,
+            primaryColor
+          );
+          pdf.addSpace(3);
 
           certifications.forEach((cert, index) => {
             pdf.setFont("helvetica", "bold", 11);

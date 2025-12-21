@@ -1,7 +1,7 @@
 import { PDFBuilder } from "../pdf-utils";
 import { ResumeData } from "@/types/resume";
 
-export function generateClassicLayoutPDFEnhanced(data: ResumeData): PDFBuilder {
+export function generateClassicLayoutPDF(data: ResumeData): PDFBuilder {
   const pdf = new PDFBuilder("portrait");
   const {
     contact,

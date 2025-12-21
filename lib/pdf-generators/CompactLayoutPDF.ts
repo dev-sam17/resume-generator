@@ -1,7 +1,7 @@
 import { PDFBuilder } from "../pdf-utils";
 import { ResumeData } from "@/types/resume";
 
-export function generateCompactLayoutPDFEnhanced(data: ResumeData): PDFBuilder {
+export function generateCompactLayoutPDF(data: ResumeData): PDFBuilder {
   const pdf = new PDFBuilder("portrait");
   const {
     contact,
@@ -68,11 +68,9 @@ export function generateCompactLayoutPDFEnhanced(data: ResumeData): PDFBuilder {
 
     let socialX = 20;
     socialItems.forEach((item, index) => {
-      pdf
-        .getPDF()
-        .textWithLink(item.text, socialX, pdf.getCurrentY(), {
-          url: item.link,
-        });
+      pdf.getPDF().textWithLink(item.text, socialX, pdf.getCurrentY(), {
+        url: item.link,
+      });
       socialX += pdf.getPDF().getTextWidth(item.text);
       if (index < socialItems.length - 1) {
         pdf.getPDF().text("    ", socialX, pdf.getCurrentY());
