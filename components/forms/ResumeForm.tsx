@@ -31,6 +31,7 @@ import { z } from "zod";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { convertLabColorsToRgb } from "@/lib/color-conversion";
+import { generatePDF, LayoutType } from "@/lib/pdf-generators";
 
 type FormData = z.infer<typeof createResumeSchema>;
 
@@ -162,6 +163,30 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
     }
   };
 
+  // New jsPDF-based PDF generation (section-aware)
+  const handleDownloadPDFNew = async () => {
+    setIsExporting(true);
+    try {
+      const formData = watch();
+      const layout = (formData.data.layout || "classic") as LayoutType;
+
+      // Generate PDF using jsPDF directly
+      const pdfBuilder = generatePDF(formData.data, layout);
+
+      // Save the PDF
+      const fileName = formData.title || "resume";
+      pdfBuilder.save(`${fileName}.pdf`);
+
+      showToast("PDF downloaded successfully!", "success");
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      showToast("Failed to generate PDF", "error");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  // Original html2canvas-based PDF generation (legacy)
   const handleDownloadPDF = async () => {
     setIsExporting(true);
     try {
@@ -787,7 +812,7 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
               <div className="flex items-center gap-2">
                 <Button
                   type="button"
-                  onClick={handleDownloadPDF}
+                  onClick={handleDownloadPDFNew}
                   disabled={isExporting}
                   variant="outline"
                   size="sm"
@@ -800,7 +825,7 @@ export function ResumeForm({ initialData, resumeId, mode }: ResumeFormProps) {
                   ) : (
                     <>
                       <Download className="h-4 w-4 mr-2" />
-                      Download PDF
+                      Download PDF (New)
                     </>
                   )}
                 </Button>
